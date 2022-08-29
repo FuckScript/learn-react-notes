@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script src="../lib/react.development.js" crossorigin></script>
+    <script src="../lib/react-dom.development.js" crossorigin></script>
+    <script src="../lib/babel.min.js"></script>
+
+    <script type="text/babel">
+      /**1. 手动实现
+       * function renderRoot() {
+       *    const root = ReactDOM.createRoot(document.querySelector('#root'))
+       *    root.render(
+       *      <div>
+       *        <h1>{message}</h1>
+       *        <button onClick={changeMessage}>修改文本</button>
+       *      </div>
+       *    )
+       *  }
+       *
+       *  let message = 'Hello World!'
+       *
+       *  function changeMessage() {
+       *    message = 'Hello React!'
+       *    renderRoot()
+       *  }
+       *
+       *  renderRoot()
+       *
+       */
+
+      /**2. class component
+       * class App extends React.Component {
+       *   constructor() {
+       *     super()
+       *     this.state = {
+       *       message: 'Hello World!'
+       *     }
+       *   }
+       *
+       *   changeMessage() {
+       *     this.setState({
+       *       message: 'Hello React!'
+       *     })
+       *   }
+       *
+       *   render() {
+       *     return (
+       *       <div>
+       *         <h1>{this.state.message}</h1>
+       *         <button onClick={() => this.changeMessage()}>修改文本</button>
+       *       </div>
+       *     )
+       *   }
+       * }
+       *
+       */
+
+      // 3. React Hook
+      function App() {
+        const [message, setMessage] = React.useState('Hello World!')
+        return (
+          <div>
+            <h1>{message}</h1>
+            <button onClick={() => setMessage('Hello React!')}>修改文本</button>
+          </div>
+        )
+      }
+
+      // 2 and 3
+      const root = ReactDOM.createRoot(document.querySelector('#root'))
+      root.render(<App />)
+    </script>
+  </body>
+</html>

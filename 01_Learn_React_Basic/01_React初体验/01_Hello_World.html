@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hello React</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <div id="app"></div>
+
+    <!-- react -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+
+    <!-- react-dom -->
+    <script
+      src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
+      crossorigin
+    ></script>
+
+    <!-- babel -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+    <script type="text/babel">
+      // react 18 允许应用程序拥有多个根
+      const root = ReactDOM.createRoot(document.querySelector('#root'))
+      root.render(<h1>Hello World!</h1>)
+      const app = ReactDOM.createRoot(document.querySelector('#app'))
+      app.render(<h1>Hello World!</h1>)
+    </script>
+  </body>
+</html>

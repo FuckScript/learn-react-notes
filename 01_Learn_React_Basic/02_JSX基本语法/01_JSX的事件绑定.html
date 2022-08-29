@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script src="../lib/react.development.js"></script>
+    <script src="../lib/react-dom.development.js"></script>
+    <script src="../lib/babel.min.js"></script>
+
+    <script type="text/babel">
+      class App extends React.Component {
+        constructor() {
+          super()
+          this.state = {
+            count: 0
+          }
+
+          this.increment1 = this.increment1.bind(this)
+        }
+
+        increment1() {
+          this.setState({ count: this.state.count + 1 })
+        }
+        increment2 = () => {
+          this.setState({ count: this.state.count + 1 })
+        }
+        increment3() {
+          this.setState({ count: this.state.count + 1 })
+        }
+
+        render() {
+          return (
+            <div>
+              <div>当前计数: {this.state.count}</div>
+              {/* this绑定方式一, bind绑定 */}
+              <button onClick={this.increment1}>+1</button>
+              {/* this绑定方式二, class fields */}
+              <button onClick={this.increment2}>+1</button>
+              {/* this绑定方式二, 箭头函数 */}
+              <button onClick={() => this.increment3()}>+1</button>
+            </div>
+          )
+        }
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById('root'))
+      root.render(<App />)
+    </script>
+  </body>
+</html>

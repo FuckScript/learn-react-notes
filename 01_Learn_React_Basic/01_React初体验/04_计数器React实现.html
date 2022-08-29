@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>计数器案例</title>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script src="../lib/react.development.js"></script>
+    <script src="../lib/react-dom.development.js"></script>
+    <script src="../lib/babel.min.js"></script>
+
+    <script type="text/babel">
+      function App() {
+        const [count, setCount] = React.useState(100)
+        return (
+          <React.Fragment>
+            <h1>当前计数: {count}</h1>
+            <button onClick={() => setCount(count - 1)}>-1</button>
+            <button onClick={() => setCount(count + 1)}>+1</button>
+          </React.Fragment>
+        )
+      }
+
+      /* 
+      class App extends React.Component {
+        constructor() {
+          super()
+          this.state = {
+            count: 0
+          }
+        }
+
+        render() {
+          const { count } = this.state
+
+          return (
+            <div>
+              <h1>当前计数: {count}</h1>
+              <button onClick={() => this.setState({ count: count - 1 })}>-1</button>
+              <button onClick={() => this.setState({ count: count + 1 })}>+1</button>
+            </div>
+          )
+        }
+      } 
+      */
+
+      const root = ReactDOM.createRoot(document.querySelector('#root'))
+      root.render(<App />)
+    </script>
+  </body>
+</html>
