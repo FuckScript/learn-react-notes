@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .list {
+        cursor: pointer;
+      }
+      .active {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script src="../lib/react.development.js"></script>
+    <script src="../lib/react-dom.development.js"></script>
+    <script src="../lib/babel.min.js"></script>
+
+    <script type="text/babel">
+      class App extends React.Component {
+        constructor() {
+          super()
+          this.state = {
+            names: ['Zhoucan', 'Iyunyu', 'Qiyana'],
+            currentIndex: 0
+          }
+        }
+
+        listClick(index) {
+          this.setState({
+            currentIndex: index
+          })
+        }
+
+        render() {
+          const { names, currentIndex } = this.state
+          return (
+            <div>
+              <ul>
+                {names.map((name, index) => (
+                  <li
+                    key={name}
+                    className={`list ${index === currentIndex ? 'active' : ''}`}
+                    onClick={() => this.listClick(index)}
+                  >
+                    {name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById('root'))
+      root.render(<App />)
+    </script>
+  </body>
+</html>

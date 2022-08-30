@@ -191,7 +191,6 @@ class App extends React.Component {
         {/* 1.event参数的传递 */}
         <button onClick={this.btnClick.bind(this)}>点击</button>
         <button onClick={e => this.btnClick(e)}>点击</button>
-
         {/* 额外的参数传递 */}`
         <button onClick={this.btnClick.bind(this, 'Iyunyu', 19)}>点击</button>
         <button onClick={e => this.btnClick(e, 'Iyunyu', 19)}>点击</button>
@@ -214,4 +213,34 @@ return (
     </ul>
   </div>
 )
+```
+
+### 条件渲染
+
+1. 条件判断语句
+
+```jsx
+render() {
+  const { isReady } = this.state
+  // if (isReady) return <div>准备开始比赛</div>
+  // return <div>开始比赛</div>
+}
+```
+
+2. 三元运算符
+
+```jsx
+render() {
+  const { isReady } = this.state
+  return <div>{isReady ? <div>准备开始比赛</div> : <div>开始比赛</div>}</div>
+}
+```
+
+3. && 运算符
+
+```jsx
+render() {
+  const { name } = this.state
+  return <div>{!!name && 'Qiyana'}</div>
+}
 ```
