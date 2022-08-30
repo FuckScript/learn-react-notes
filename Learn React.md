@@ -4,11 +4,13 @@
 
 ## 学习 React 基础语法
 
-### Hello React!
+### 一、组件编写方式
 
 react  
 react-dom  
 babel
+
+1. Hello React!
 
 ```html
 <!DOCTYPE html>
@@ -42,7 +44,7 @@ babel
 </html>
 ```
 
-### Class Component
+2. Class Component
 
 ```jsx
 class App extends React.Component {
@@ -73,7 +75,7 @@ const root = ReactDOM.createRoot(document.querySelector('#root'))
 root.render(<App />)
 ```
 
-### Function Hook Component
+3. Function Hook Component
 
 ```jsx
 function App() {
