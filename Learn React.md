@@ -94,7 +94,7 @@ root.render(<App />)
 
 JSX 是一种 JavaScript 的语法扩展, 也在很多地方称之为 JavaScript XML, 因为看起来就是一段 XML 语法; 它用于描述我们的 UI 界面, 并且其完全可以和 JavaScript 融合在一起使用; 它不同于 Vue 中的模块语法,你不需要专门学习模块语法中的一些指令(比如 v-for/v-if 等等)
 
-### 注释
+### 一、注释
 
 ```jsx
 function App() {
@@ -102,7 +102,7 @@ function App() {
 }
 ```
 
-### 插入内容
+### 二、插入内容
 
 - 当变量是 Number、String、Array 是可以直接显示
 - 当变量是 undefined、null、Boolean 内容为空
@@ -111,7 +111,7 @@ function App() {
 - 表达式
 - 调用方法
 
-### 属性绑定
+### 三、属性绑定
 
 ```jsx
 function App() {
@@ -130,7 +130,7 @@ function App() {
 }
 ```
 
-### 事件绑定
+### 四、事件绑定
 
 ```jsx
 class App extends React.Component {
@@ -169,7 +169,7 @@ class App extends React.Component {
 }
 ```
 
-### 传递参数
+### 五、传递参数
 
 ```jsx
 class App extends React.Component {
@@ -200,7 +200,7 @@ class App extends React.Component {
 }
 ```
 
-### 数组遍历
+### 六、数组遍历
 
 ```jsx
 const [names, setNames] = React.useState(['...'])
@@ -215,7 +215,7 @@ return (
 )
 ```
 
-### 条件渲染
+### 七、条件渲染
 
 1. 条件判断语句
 
