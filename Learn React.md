@@ -202,22 +202,7 @@ class App extends React.Component {
 }
 ```
 
-### 六、数组遍历
-
-```jsx
-const [names, setNames] = React.useState(['...'])
-return (
-  <div>
-    <ul>
-      {names.map(name => (
-        <li key={name}>{name}</li>
-      ))}
-    </ul>
-  </div>
-)
-```
-
-### 七、条件渲染
+### 六、条件渲染
 
 1. 条件判断语句
 
@@ -246,3 +231,42 @@ render() {
   return <div>{!!name && 'Qiyana'}</div>
 }
 ```
+
+### 七、列表遍历
+
+```jsx
+class App extends React.Component {
+  constructor() {
+    super()
+    this.state = {
+      students: [
+        { id: 1, name: 'Zhoucan', score: 99 },
+        { id: 2, name: 'Kiana', score: 98 },
+        { id: 3, name: 'Qiyana', score: 199 }
+      ]
+    }
+  }
+
+  render() {
+    const { students } = this.state
+
+    return (
+      <div>
+        <ul>
+          {students.map(student => (
+            <li key={student.id}>
+              <h4>学号: {student.id}</h4>
+              <p>
+                姓名: {student.name}, 考试分数: {student.score}
+              </p>
+              <hr />
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+}
+```
+
+### 八、babel 转换
