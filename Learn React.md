@@ -270,3 +270,142 @@ class App extends React.Component {
 ```
 
 ### 八、babel 转换
+
+[babel 网站](https://babeljs.io/repl)
+
+```jsx
+function App() {
+  return React.createElement('div', { class: 'hello' }, [
+    React.createElement('span', null, 'Qiyana')
+  ])
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'))
+root.render(React.createElement(App, null))
+```
+
+## CLI
+
+安装: `npm install create-react-app -g`
+
+### 一、组件化开发
+
+1. 根据组件的定义方式， 可以分为: **函数组件**和**类组件**
+2. 根据组件内部是否有状态需要维护, 可以分成: **无状态组件**和有**状态组件**
+3. 根据组件的不同职责, 可以分成: **展示型组件**和**容器型组件**
+
+### 二、生命周期
+
+- **constructor**
+- **render**
+
+- **componentDidMount**
+- *componentDidUpdate*
+- *componentWillUnmount*
+
+```jsx
+import {Component} from 'react';
+
+export default class HelloWorld extends Component {
+  constructor() {
+    super();
+    this.state = {message: 'Kiana'};
+
+    console.log('-----constructor');
+  }
+
+  changeText() {
+    this.setState({message: 'Qiyana'});
+  }
+
+  render() {
+    const {message} = this.state;
+    console.log('-----render');
+    return (
+      <div>
+        <h4>HelloWorld Component</h4>
+        <p>{message}</p>
+        <button onClick={(e) => this.changeText()}>按钮</button>
+      </div>
+    );
+  }
+
+  // 组件挂载完成
+  componentDidMount() {
+    console.log('-----componentDidMount');
+  }
+
+  // 组件更新完成
+  componentDidUpdate() {
+    console.log('-----componentDidUpdate');
+  }
+
+  // 组件卸载之前
+  componentWillUnmount() {
+    console.log('-----componentWillUnmount');
+  }
+}
+
+```
+
+不常用的生命周期函数:
+
+1. *getSnapshotBeforeUpdate*: 在React更新DOM之前回调的一个函数, 可以获取DOM更新前的一些信息
+2. **shouldComponentUpdate**: 该声明周期比较重要, 用于性能优化
+
+```jsx
+import {Component} from 'react';
+
+export default class HelloWorld extends Component {
+  constructor() {
+    super();
+    this.state = {message: 'Kiana'};
+  }
+
+  changeText() {
+    this.setState({message: 'Qiyana'});
+  }
+
+  render() {
+    const {message} = this.state;
+    console.log('-----render');
+    return (
+      <div>
+        <h4>HelloWorld Component</h4>
+        <p>{message}</p>
+        <button onClick={(e) => this.changeText()}>按钮</button>
+      </div>
+    );
+  }
+
+  // 组件更新完成
+  componentDidUpdate(preProps, preState, snapshot) {
+    console.log(preProps, preState, snapshot);
+    console.log('-----componentDidUpdate');
+  }
+
+  // 组件状态更新 render函数是否重新执行
+  shouldComponentUpdate() {
+    // true: 需要重新执行
+    // false: 不需要重新执行
+    return true;
+  }
+
+  // 更新之前保存数据, 返回值可以被componentDidUpdate接收
+  getSnapshotBeforeUpdate() {
+    return {name: 'Qiyana'};
+  }
+}
+
+```
+
+### 三、组件通信
+
+- 组件嵌套
+- **组件通信**
+
+```jsx
+```
+
+
+
