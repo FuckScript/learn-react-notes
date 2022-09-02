@@ -1,9 +1,15 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 
-export class MainBanners extends Component {
+class MainBanner extends Component {
+  // 默认值: 方式2
+  static defaultProps = {
+    banners: [],
+    title: '默认值',
+  };
+
   render() {
     const {banners} = this.props;
-    console.log(banners);
 
     return (
       <div>
@@ -18,4 +24,16 @@ export class MainBanners extends Component {
   }
 }
 
-export default MainBanners;
+// 限定类型
+MainBanner.propTypes = {
+  banners: PropTypes.array.isRequired,
+  title: PropTypes.array,
+};
+
+// 默认值: 方式1
+// MainBanner.defaultProps = {
+//   banners: [],
+//   title: '默认值',
+// };
+
+export default MainBanner;
