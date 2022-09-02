@@ -440,8 +440,91 @@ MainBanner.propTypes = {
 // 默认值: 方式1
 MainBanner.defaultProps = {
   banners: [],
-  title: '默认值',
-};
+  title: '默认值'
+}
 
 export default MainBanner
 ```
+
+- 非父子组件通信
+
+  1. 创建上下文 `import React from 'react';const ThemeContext = React.createContext({color: 'blue'});`
+  2. `<ThemeContext.Provider value={{color: 'red', size: '30'}}></...>`
+  3. `HomeInfo.contextType = ThemeContext;`或者`<UserContext.Consumer>{(value) => <h2>用户: {value.nickname}</h2>}</UserContext.Consumer>`
+  4. `const {color} = this.context;`
+
+- 插槽
+
+  1. 默认插槽效果
+
+  ```jsx
+  /* App
+  <NavBar>
+    <button>按钮</button>
+    <h4>我是标题</h4>
+    <i>斜体文字</i>
+  </NavBar> 
+  
+  const { children } = this.props
+  return (
+    <div className="nav-bar">
+      <div className="left">{children[0]}</div>
+      <div className="center">{children[1]}</div>
+      <div className="right">{children[2]}</div>
+    </div>
+  )
+  */
+  ```
+
+  2. 具名插槽效果
+
+  ```jsx
+  /* App
+  <NavBar
+    leftSlot={<button>按钮</button>}
+    centerSlot={<h4>我是标题</h4>}
+    rightSlot={<i>斜体文字</i>}
+  /> 
+  
+  const {leftSlot, centerSlot, rightSlot} = this.props;
+  return (
+    <div className="nav-bar">
+      <div className="left">{leftSlot}</div>
+      <div className="center">{centerSlot}</div>
+      <div className="right">{rightSlot}</div>
+    </div>
+  );
+  */
+  ```
+
+  3. 作用域插槽效果
+
+  ```jsx
+  /* 
+  <div>
+    <NavBar
+      titles={titles}
+      currentIndex={currentIndex}
+      listClick={index => this.changeIndex(index)}
+      navType={text => <button>{text}</button>}
+    />
+    <p>{titles[currentIndex]}</p>
+  </div> 
+  
+  const { titles, navType } = this.props
+  
+  return (
+    <div>
+      <ul>
+        {titles.map((title, index) => {
+          return (
+            <li key={title} onClick={() => this.listClick(index)}>
+              {navType(title)}
+            </li>
+          )
+        })}
+      </ul>
+    </div>
+  )
+  */
+  ```
