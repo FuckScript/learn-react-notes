@@ -300,103 +300,101 @@ root.render(React.createElement(App, null))
 - **render**
 
 - **componentDidMount**
-- *componentDidUpdate*
-- *componentWillUnmount*
+- _componentDidUpdate_
+- _componentWillUnmount_
 
 ```jsx
-import {Component} from 'react';
+import { Component } from 'react'
 
 export default class HelloWorld extends Component {
   constructor() {
-    super();
-    this.state = {message: 'Kiana'};
+    super()
+    this.state = { message: 'Kiana' }
 
-    console.log('-----constructor');
+    console.log('-----constructor')
   }
 
   changeText() {
-    this.setState({message: 'Qiyana'});
+    this.setState({ message: 'Qiyana' })
   }
 
   render() {
-    const {message} = this.state;
-    console.log('-----render');
+    const { message } = this.state
+    console.log('-----render')
     return (
       <div>
         <h4>HelloWorld Component</h4>
         <p>{message}</p>
-        <button onClick={(e) => this.changeText()}>按钮</button>
+        <button onClick={e => this.changeText()}>按钮</button>
       </div>
-    );
+    )
   }
 
   // 组件挂载完成
   componentDidMount() {
-    console.log('-----componentDidMount');
+    console.log('-----componentDidMount')
   }
 
   // 组件更新完成
   componentDidUpdate() {
-    console.log('-----componentDidUpdate');
+    console.log('-----componentDidUpdate')
   }
 
   // 组件卸载之前
   componentWillUnmount() {
-    console.log('-----componentWillUnmount');
+    console.log('-----componentWillUnmount')
   }
 }
-
 ```
 
 不常用的生命周期函数:
 
-1. *getSnapshotBeforeUpdate*: 在React更新DOM之前回调的一个函数, 可以获取DOM更新前的一些信息
+1. _getSnapshotBeforeUpdate_: 在 React 更新 DOM 之前回调的一个函数, 可以获取 DOM 更新前的一些信息
 2. **shouldComponentUpdate**: 该声明周期比较重要, 用于性能优化
 
 ```jsx
-import {Component} from 'react';
+import { Component } from 'react'
 
 export default class HelloWorld extends Component {
   constructor() {
-    super();
-    this.state = {message: 'Kiana'};
+    super()
+    this.state = { message: 'Kiana' }
   }
 
   changeText() {
-    this.setState({message: 'Qiyana'});
+    this.setState({ message: 'Qiyana' })
   }
 
   render() {
-    const {message} = this.state;
-    console.log('-----render');
+    const { message } = this.state
+    console.log('-----render')
     return (
       <div>
         <h4>HelloWorld Component</h4>
         <p>{message}</p>
-        <button onClick={(e) => this.changeText()}>按钮</button>
+        <button onClick={e => this.changeText()}>按钮</button>
       </div>
-    );
+    )
   }
 
   // 组件更新完成
   componentDidUpdate(preProps, preState, snapshot) {
-    console.log(preProps, preState, snapshot);
-    console.log('-----componentDidUpdate');
+    console.log(preProps, preState, snapshot)
+    console.log('-----componentDidUpdate')
   }
 
   // 组件状态更新 render函数是否重新执行
   shouldComponentUpdate() {
     // true: 需要重新执行
     // false: 不需要重新执行
-    return true;
+    return true
   }
 
   // 更新之前保存数据, 返回值可以被componentDidUpdate接收
   getSnapshotBeforeUpdate() {
-    return {name: 'Qiyana'};
+    return { name: 'Qiyana' }
   }
 }
-
 ```
 
 ### 三、组件通信
@@ -404,8 +402,46 @@ export default class HelloWorld extends Component {
 - 组件嵌套
 - **组件通信**
 
+- _类型验证_
+
 ```jsx
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+
+class MainBanner extends Component {
+  // 默认值: 方式2
+  // static defaultProps = {
+  //   banners: [],
+  //   title: '默认值'
+  // }
+
+  render() {
+    const { banners } = this.props
+
+    return (
+      <div>
+        <h4>轮播图</h4>
+        <ul>
+          {banners.map(item => {
+            return <li key={item.acm}>{item.title}</li>
+          })}
+        </ul>
+      </div>
+    )
+  }
+}
+
+// 限定类型
+MainBanner.propTypes = {
+  banners: PropTypes.array.isRequired,
+  title: PropTypes.array
+}
+
+// 默认值: 方式1
+MainBanner.defaultProps = {
+  banners: [],
+  title: '默认值',
+};
+
+export default MainBanner
 ```
-
-
-
