@@ -1,169 +1,169 @@
-# Learn React
+# 学习 React
 
-**React** 是一个用于构建用户界面的 JavaScript 库。[文档](https://zh-hans.reactjs.org/docs/getting-started.html)
+用于构建用户界面的 JavaScript 库
 
-## 学习 React 基础语法
+## 第一个 React 程序
 
-### 一、组件编写方式
+网页文件需要引入三个 JS 库文件
 
-react  
-react-dom  
-babel
+- react
+- react-dom
+- babel
 
-1. Hello React!
+如果网站使用了 JSX 语法就必须使用 babel 编译, 否则浏览器报语法错误.
 
 ```html
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hello React</title>
-  </head>
-  <body>
-    <div id="root"></div>
+<body>
+  <div id="root"></div>
 
-    <!-- react -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 
-    <!-- react-dom -->
-    <script
-      src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
-      crossorigin
-    ></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 
-    <!-- babel -->
-    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
-    <script type="text/babel">
-      const root = ReactDOM.createRoot(document.querySelector('#root'))
-      root.render(<h1>Hello World!</h1>)
-    </script>
-  </body>
-</html>
+  <script type="text/babel">
+    const root = ReactDOM.createRoot(document.querySelector('#root'))
+    root.render(<h1>Hello World!</h1>)
+  </script>
+</body>
 ```
 
-2. Class Component
+注意:
+
+1. crossorigin 用于处理网站跨域问题.
+2. 主要编写代码的 script 标签必须写上 `type="text/babel"`, 意思是当前 script 标签使用 babel 编译.
+
+## 组件编写方式
+
+#### 类组件
+
+类组件必须继承自 `React.Component`,否则只是一个类, 而不是一个组件.
 
 ```jsx
 class App extends React.Component {
   constructor() {
     super()
-    this.state = {
-      message: 'Hello World!'
-    }
   }
 
-  changeMessage() {
-    this.setState({
-      message: 'Hello React!'
-    })
+  render() {
+    return <div>App</div>
+  }
+}
+```
+
+#### 函数式组件
+
+函数式组件不需要继承父类
+
+```jsx
+function App() {
+  return <div>App</div>
+}
+```
+
+类组件的 render 函数返回值和函数式组件的返回值可以如下:
+
+- React 元素
+- 数组和 fragments
+- Portals
+- 字符串和数值类型
+- ...
+
+## JSX 语法
+
+JSX, 是一个 JavaScript 的语法扩展, 其中可以编写任何的 JS 代码.
+
+#### 使用变量
+
+```jsx
+class App extends React.Component {
+  constructor() {
+    super()
+    this.state = { message: 'Hello Qiyana' }
+  }
+
+  render() {
+    const { message } = this.state
+    return <div>当前计数: {message}</div>
+  }
+}
+```
+
+注意:
+
+1. "状态变量" 必须保存在 this.state 中.
+2. 使用变量时需要使用大括号包含`{message}`.
+
+#### 事件绑定
+
+由于 React 源码中给 onClick 接收的函数显示绑定了 undefined, 因此在事件绑定时, 我们不能直接传入一个函数, 避免使用 this 时发生错误.
+
+```jsx
+// 绑定方式1: bind绑定
+class App extends React.Component {
+  constructor() {
+    super()
+    this.state = { count: 0 }
+    this.increment1 = this.increment1.bind(this)
+  }
+
+  increment() {
+    this.setState({ count: this.state.count + 1 })
   }
 
   render() {
     return (
       <div>
-        <h1>{this.state.message}</h1>
-        <button onClick={() => this.changeMessage()}>修改文本</button>
+        <h4>当前计数: {this.state.count}</h4>
+        <button onClick={this.increment1}>+1</button>
       </div>
     )
   }
 }
-
-const root = ReactDOM.createRoot(document.querySelector('#root'))
-root.render(<App />)
 ```
 
-3. Function Hook Component
-
-```jsx
-function App() {
-  const [message, setMessage] = React.useState('Hello World!')
-  return (
-    <div>
-      <h1>{message}</h1>
-      <button onClick={() => setMessage('Hello React!')}>修改文本</button>
-    </div>
-  )
-}
-
-const root = ReactDOM.createRoot(document.querySelector('#root'))
-root.render(<App />)
-```
-
-## JSX
-
-JSX 是一种 JavaScript 的语法扩展, 也在很多地方称之为 JavaScript XML, 因为看起来就是一段 XML 语法; 它用于描述我们的 UI 界面, 并且其完全可以和 JavaScript 融合在一起使用; 它不同于 Vue 中的模块语法,你不需要专门学习模块语法中的一些指令(比如 v-for/v-if 等等)
-
-### 一、注释
-
-```jsx
-function App() {
-  return <div>{/* <ul></ul> */}</div>
-}
-```
-
-### 二、插入内容
-
-- 当变量是 Number、String、Array 是可以直接显示
-- 当变量是 undefined、null、Boolean 内容为空
-  - 如果希望显示，那么需要转换成字符串，如 toString()、String(变量)、变量+''
-- (重要) Object 类型不能作为子元素显示
-- 表达式
-- 调用方法
-
-### 三、属性绑定
-
-```jsx
-function App() {
-  const title = 'H2 title'
-  const isActive = true
-  return (
-    <div>
-      {/* 基本属性的绑定，href、src等等同理 */}
-      <div title={title}>这分明不是h2元素！！！</div>
-      {/* class属性 */}
-      <div className={'el-div' + isActive ? ' active' : ''}></div>
-      {/* style属性 */}
-      <div style={{ color: 'red', fontSize: '19px' }}></div>
-    </div>
-  )
-}
-```
-
-### 四、事件绑定
+方式 1 的优势在于多次调用时不需要总是.bind(this), 但并不是最推荐的绑定方式.
 
 ```jsx
 class App extends React.Component {
   constructor() {
     super()
-    this.state = {
-      count: 0
-    }
-
-    this.increment1 = this.increment1.bind(this)
+    this.state = { count: 0 }
   }
 
-  increment1() {
-    this.setState({ count: this.state.count + 1 })
-  }
-  increment2 = () => {
-    this.setState({ count: this.state.count + 1 })
-  }
-  increment3() {
+  increment() {
     this.setState({ count: this.state.count + 1 })
   }
 
   render() {
     return (
       <div>
-        <div>当前计数: {this.state.count}</div>
-        {/* this绑定方式一, bind绑定 */}
-        <button onClick={this.increment1}>+1</button>
-        {/* this绑定方式二, class fields */}
+        <h4>当前计数: {this.state.count}</h4>
         <button onClick={this.increment2}>+1</button>
-        {/* this绑定方式二, 箭头函数 */}
+      </div>
+    )
+  }
+}
+```
+
+方式 2(class fields)利用不知道 ES 几的新特性, 原理在于箭头函数不能绑定 this, 而使我们在函数体中使用 this 时,回去往上层函数作用域寻找 this.
+
+```jsx
+class App extends React.Component {
+  constructor() {
+    super()
+    this.state = { count: 0 }
+  }
+
+  increment() {
+    this.setState({ count: this.state.count + 1 })
+  }
+
+  render() {
+    return (
+      <div>
+        <h4>当前计数: {this.state.count}</h4>
         <button onClick={() => this.increment3()}>+1</button>
       </div>
     )
@@ -171,194 +171,541 @@ class App extends React.Component {
 }
 ```
 
-### 五、传递参数
+方式 3 是最推荐的绑定方式, 它的优势在于传递参数特别方便.
+
+#### 参数传递
+
+当我们触发事件时, React 会回调我们传入的函数, 并给函数传入一个 event 参数. 我们可以在传入函数编写时使用形参接收并传递给真正执行的函数.
 
 ```jsx
 class App extends React.Component {
-  constructor() {
-    super()
-    this.state = {
-      message: 'Hello Kiana'
-    }
-  }
-
-  btnClick(e, name, age) {
-    console.log(`event: ${e}, this: ${this}, name: ${name}, age: ${age}`)
+  btnClick(event) {
+    console.log(event)
   }
 
   render() {
     return (
       <div>
-        <div>{this.state.message}</div>
-        {/* 1.event参数的传递 */}
-        <button onClick={this.btnClick.bind(this)}>点击</button>
         <button onClick={e => this.btnClick(e)}>点击</button>
-        {/* 额外的参数传递 */}`
-        <button onClick={this.btnClick.bind(this, 'Iyunyu', 19)}>点击</button>
-        <button onClick={e => this.btnClick(e, 'Iyunyu', 19)}>点击</button>
       </div>
     )
   }
 }
 ```
 
-### 六、条件渲染
-
-1. 条件判断语句
+当然我们也可以不适用 event 参数. 除了 event 参数之外, 当我们还有其他额外的参数, 可以直接传入真正执行的函数`btnClick`
 
 ```jsx
-render() {
-  const { isReady } = this.state
-  // if (isReady) return <div>准备开始比赛</div>
-  // return <div>开始比赛</div>
+class App extends React.Component {
+  btnClick(event, nickname) {
+    console.log(event)
+  }
+
+  render() {
+    return (
+      <div>
+        <button onClick={e => this.btnClick(e, 'Qiyana')}>点击</button>
+      </div>
+    )
+  }
 }
 ```
 
-2. 三元运算符
+#### 条件渲染
 
-```jsx
-render() {
-  const { isReady } = this.state
-  return <div>{isReady ? <div>准备开始比赛</div> : <div>开始比赛</div>}</div>
-}
-```
-
-3. && 运算符
-
-```jsx
-render() {
-  const { name } = this.state
-  return <div>{!!name && 'Qiyana'}</div>
-}
-```
-
-### 七、列表遍历
+React 中的条件渲染并没有相关的指令(如 vue 中的 v-if/v-else), 但是可以使用 JS 代码实现 v-if 的效果. 实现方式不止三种...(妈呀太灵活了)
 
 ```jsx
 class App extends React.Component {
   constructor() {
     super()
     this.state = {
-      students: [
-        { id: 1, name: 'Zhoucan', score: 99 },
-        { id: 2, name: 'Kiana', score: 98 },
-        { id: 3, name: 'Qiyana', score: 199 }
-      ]
+      isReady: false,
+      name: 'Iyunyu'
     }
+  }
+
+  render() {
+    const { isReady, name } = this.state
+    // 方式1: if语句
+    // if (isReady) return <div>准备开始比赛</div>
+    // return <div>开始比赛</div>
+
+    // 方式2: 三元表达式
+    // return <div>{isReady ? <div>准备开始比赛</div> : <div>开始比赛</div>}</div>
+
+    // 方式3: && 逻辑与
+    return <div>{name && 'Qiyana'}</div>
+  }
+}
+```
+
+#### 列表渲染
+
+同样的, React 中并没有实现类似 v-for 的指令, 可以使用 for 循环或者`数组高阶函数 map` 实现.
+
+```jsx
+class App extends React.Component {
+  constructor() {
+    super()
+    this.state = { students: ['Qiyana', 'Kiana'] }
   }
 
   render() {
     const { students } = this.state
 
     return (
-      <div>
-        <ul>
-          {students.map(student => (
-            <li key={student.id}>
-              <h4>学号: {student.id}</h4>
-              <p>
-                姓名: {student.name}, 考试分数: {student.score}
-              </p>
-              <hr />
-            </li>
-          ))}
-        </ul>
-      </div>
+      <ul>
+        {students.map(student => (
+          <li>{student}</li>
+        ))}
+      </ul>
     )
   }
 }
 ```
 
-### 八、babel 转换
+## 脚手架(CLI)的使用
 
-[babel 网站](https://babeljs.io/repl)
+使用脚手架的目的是, 方便前端项目工程化.
 
-```jsx
-function App() {
-  return React.createElement('div', { class: 'hello' }, [
-    React.createElement('span', null, 'Qiyana')
-  ])
-}
+1. 全局安装脚手架: create-react-app, `npm i create-react-app -g`.
+2. 创建项目: `npx create-react-app project-name`
 
-const root = ReactDOM.createRoot(document.getElementById('root'))
-root.render(React.createElement(App, null))
-```
+## 组件化
 
-## CLI
+组件允许你将 UI 拆分为独立可复用的代码片段, 并对每个片段进行独立构思.
 
-安装: `npm install create-react-app -g`
+#### 类组件与函数式组件
 
-### 一、组件化开发
+代码请往顶上翻哦亲~
 
-1. 根据组件的定义方式， 可以分为: **函数组件**和**类组件**
-2. 根据组件内部是否有状态需要维护, 可以分成: **无状态组件**和有**状态组件**
-3. 根据组件的不同职责, 可以分成: **展示型组件**和**容器型组件**
+#### 生命周期
 
-### 二、生命周期
+- constructor
+- render
+- componentDidMount
+- componentDidUpdate
+- componentWillUnmount
+- shouldComponentUpdate
+- getSnapshotBeforeUpdate
 
-- **constructor**
-- **render**
-
-- **componentDidMount**
-- _componentDidUpdate_
-- _componentWillUnmount_
+constructor 构造方法在组件创建实例时调用, render 函数在每一个重新渲染时调用
 
 ```jsx
-import { Component } from 'react'
-
-export default class HelloWorld extends Component {
+class App extends Component {
   constructor() {
     super()
-    this.state = { message: 'Kiana' }
-
+    this.state = { message: 'App Component' }
     console.log('-----constructor')
-  }
-
-  changeText() {
-    this.setState({ message: 'Qiyana' })
   }
 
   render() {
     const { message } = this.state
-    console.log('-----render')
-    return (
-      <div>
-        <h4>HelloWorld Component</h4>
-        <p>{message}</p>
-        <button onClick={e => this.changeText()}>按钮</button>
-      </div>
-    )
+    return <>{message}</>
   }
+}
+```
 
-  // 组件挂载完成
+componentDidMount 方法在组件挂载完成时回调, componentDidUpdate 方法在组件状态更新完成时回调,
+componentWillUnmount 方法在组件即将卸载时回调.
+
+```jsx
+class HelloWorld extends Component {
+  // ...
   componentDidMount() {
     console.log('-----componentDidMount')
   }
 
-  // 组件更新完成
-  componentDidUpdate() {
+  componentDidUpdate(preProps, preState, snapshot) {
+    console.log(preProps, preState, snapshot)
     console.log('-----componentDidUpdate')
   }
 
-  // 组件卸载之前
   componentWillUnmount() {
     console.log('-----componentWillUnmount')
   }
 }
 ```
 
-不常用的生命周期函数:
+shouldComponentUpdate 用于 SCU 优化(性能优化), 通过返回一个布尔值来决定组件是否重新渲染
 
-1. _getSnapshotBeforeUpdate_: 在 React 更新 DOM 之前回调的一个函数, 可以获取 DOM 更新前的一些信息
-2. **shouldComponentUpdate**: 该声明周期比较重要, 用于性能优化
+```jsx
+class HelloWorld extends Component {
+  // ...
+  shouldComponentUpdate(newProps, nextState) {
+    // true or false
+    return true
+  }
+}
+```
+
+getSnapshotBeforeUpdate 用于组件渲染前将 props/state 保存起来, 可以传给 componentDidUpdate 第三个形参
+
+```jsx
+class HelloWorld extends Component {
+  // ...
+  getSnapshotBeforeUpdate() {
+    return { nickname: 'Qiyana' }
+  }
+}
+```
+
+#### 组件嵌套
+
+当一个应用程序过大时, 如果将所有的代码都写在一个组件时, 不可避免的此组件会过于臃肿, 因此我们可以将应用划分为一个个子组件, 可以让组件更好的开发与维护.
+
+```jsx
+class App extends Component {
+  render() {
+    return (
+      <div>
+        <Main />
+        <Profile />
+      </div>
+    )
+  }
+}
+
+class Main extends Component {
+  render() {
+    return <div>Main Component</div>
+  }
+}
+
+function Profile() {
+  return <div>Profile Component</div>
+}
+```
+
+#### 组件通信
+
+**父组件给子组件传递数据.** 在创建子组件实例时, 传入的属性会保存在子组件的`this.props`中.
+
+```jsx
+class App extends Component {
+  constructor() {
+    super()
+    this.state = { nickname: 'Qiyana' }
+  }
+
+  render() {
+    const nickname = this.state
+    return (
+      <div>
+        <Hello nickname={nickname} />
+      </div>
+    )
+  }
+}
+
+class Hello extends Component {
+  render() {
+    const { nickname } = this.props
+    return <div>昵称: {nickname}</div>
+  }
+}
+```
+
+**子组件给父组件传递数据**, 父组件传递函数给子组件, 子组件发生事件点击时, 可以调用 this.props 中父组件传递过来的函数并传入参数. 这就是子组件给父组件传递数据
+
+注意: 父组件给子组件传递的函数也需要用箭头函数包裹, 不然子组件调用时会隐式绑定的给函数绑定 props 为 this. 从而发生错误.
+
+```jsx
+class App extends Component {
+  constructor() {
+    super()
+    this.state = { count: 0 }
+  }
+
+  changeCount(count) {
+    this.setState({
+      count: this.state.count + count
+    })
+  }
+
+  render() {
+    const { count } = this.state
+    return (
+      <div>
+        <h4>当前计数: {count}</h4>
+        <BtnComponent changeCount={count => this.changeCount(count)} />
+      </div>
+    )
+  }
+}
+
+class BtnComponent extends Component {
+  changeCount(count) {
+    this.props.changeCount(count)
+  }
+
+  render() {
+    return (
+      <div>
+        <button onClick={() => this.changeCount(-1)}>-1</button>
+        <button onClick={() => this.changeCount(1)}>+1</button>
+      </div>
+    )
+  }
+}
+```
+
+**非父子组件通信**, 意思是祖孙之间的数据传递.
+
+1. 创建上下文`ThemeContext`
+2. 使用 `<ThemeContext.Provider>` 将根组件包裹, 并将需要共享的数据转入 value 属性(必须是 value 属性)
+3. 子孙组件使用.
+
+   - 类组件: `HomeInfo.contextType = ThemeContext`
+   - 函数式组件: ` <ThemeContext.Consumer>` 包裹并传入一个函数
+
+4. 类组件在`this.context`中获取, 函数组件在 value 参数中获取
+
+```jsx
+import React, { Component } from 'react'
+const ThemeContext = React.createContext({
+  /* ... */
+})
+
+export default class App extends Component {
+  render() {
+    return (
+      <div>
+        <ThemeContext.Provider value={{ color: 'red' }}>
+          <Home />
+        </ThemeContext.Provider>
+      </div>
+    )
+  }
+}
+
+class Home extends Component {
+  render() {
+    return (
+      <div>
+        <HomeInfo />
+        <HomeBanner />
+      </div>
+    )
+  }
+}
+
+class HomeInfo extends Component {
+  render() {
+    const { color } = this.context
+
+    return <div style={{ color: color }}>HomeInfo Component</div>
+  }
+}
+
+HomeInfo.contextType = ThemeContext
+
+function HomeBanner() {
+  return (
+    <div>
+      <ThemeContext.Consumer>
+        {value => <span style={{ color: value.color }}>HomeBanner Component</span>}
+      </ThemeContext.Consumer>
+    </div>
+  )
+}
+```
+
+#### 类型验证
+
+当项目使用 TS 时, 我们又需要给我们传入子组件的函数添加类型验证, 这样可以避免后人维护时发生不可预知的错误.
+
+```jsx
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+
+export default class App extends Component {
+  render() {
+    return (
+      <div>
+        <Main message={123} />
+      </div>
+    )
+  }
+}
+
+class Main extends Component {
+  render() {
+    const { message } = this.props
+    return <h4>{message}</h4>
+  }
+}
+
+// 类型限制
+Main.propTypes = {
+  // 必传: PropTypes.number.isRequired
+  message: PropTypes.number
+}
+
+// 默认值
+Main.defaultProps = {
+  message: 19
+}
+```
+
+#### 插槽
+
+React 中并没有插槽的概念, 但是却可以实现插槽的效果.
+
+**默认插槽效果**
+
+当在子组件双标签中传入的元素为 1 个时, children 类型是一个 React 元素, 当传入的元素 >=2 时, children 的类型是数组.
+
+```jsx
+class App extends Component {
+  render() {
+    return (
+      <div>
+        <Hello>
+          <h2>你好呀, 琪亚娜!</h2>
+          <h4>你好呀, 琪亚娜!</h4>
+          <h5>你好呀, 琪亚娜!</h5>
+        </Hello>
+      </div>
+    )
+  }
+}
+
+class Hello extends Component {
+  render() {
+    const { children } = this.props
+
+    return (
+      <div>
+        {children[0]}
+        {children[1]}
+        {children[2]}
+      </div>
+    )
+  }
+}
+```
+
+**具名插槽效果**
+
+我们不仅可以子组件传递一些数据, 也可以传递元素
+
+```jsx
+class App extends Component {
+  render() {
+    return (
+      <div>
+        <Hello leftSlot={<button>按钮</button>} />
+      </div>
+    )
+  }
+}
+
+class Hello extends Component {
+  render() {
+    const { leftSlot } = this.props
+    return <div>{leftSlot}</div>
+  }
+}
+```
+
+**作用域插槽效果**
+
+当给子组件传递一组数据时, 我们需要由自己决定渲染元素, 但是数据却要通过子组件传递, 作用域插槽可以实现
 
 ```jsx
 import { Component } from 'react'
 
-export default class HelloWorld extends Component {
+export default class App extends Component {
   constructor() {
     super()
-    this.state = { message: 'Kiana' }
+    this.state = { titles: ['流行', '新歌', '精选'] }
+  }
+
+  render() {
+    const { titles } = this.state
+    return (
+      <div>
+        <Hello titles={titles} renderListEl={title => <button>{title}</button>} />
+      </div>
+    )
+  }
+}
+
+class Hello extends Component {
+  render() {
+    const { titles, renderListEl } = this.props
+
+    return (
+      <div>
+        <ul>
+          {titles.map(title => {
+            return <li key={title}>{renderListEl(title)}</li>
+          })}
+        </ul>
+      </div>
+    )
+  }
+}
+```
+
+#### setState
+
+**写法**
+
+```jsx
+class App extends Component {
+  constructor() {
+    super()
+    this.state = { message: 'Qiyana' }
+  }
+
+  changeText() {
+    // 写法1
+    this.setState({ message: 'Kiana' })
+
+    // 写法2
+    this.setState((state, props) => ({ message: 'Kiana' }))
+
+    // 写法3: 1 和 2 的基础上多传入一个参数(函数)
+    this.setState({ message: 'Kiana' }, () => {
+      // 当 前一个 state 的值和 后一个 state 的值合并完成之后会调用这个函数
+    })
+  }
+
+  render() {
+    const { message } = this.state
+    return (
+      <div>
+        <h4>{message}</h4>
+        <button onClick={() => this.changeText()}>修改文本</button>
+      </div>
+    )
+  }
+}
+```
+
+setState 的设计是: **异步执行**, 在 React 18 之前, 当 setState 执行在 setTimeout、promise.then、document 事件等之中的回调, setState 是同步调用的. 而 React 18 之后, setState 默认都是异步调用, 即使是在上面所提到的函数中回调, 依旧是异步的调用.
+
+为什么要设计成异步呢? 有以下优势:
+
+1. setState 设计为异步, 可以显著的提升性能;
+   - 如果每次调用 setState 都进行一次更新, 那么意味着 render 函数会被频繁调用, 界面重新渲染, 这样效率是很低的
+   - 最好的办法应该是获取到多个更新，之后进行批量更新；
+2. 如果同步更新了 state, 但是还没有执行 render 函数, 那么 state 和 props 不能保持同步;
+
+#### SCU 优化
+
+当我们调用组件中的 this.setState 方法时, 其组件的 render 方法和其子组件的 render 方法都会重新调用, 会造成性能浪费.
+
+我们可以手动的使用 shouldComponentUpdate, 简称 SCU, 进行组件 render 方法是否需要重新执行的优化.
+
+```jsx
+class App extends Component {
+  constructor() {
+    super()
+    this.state = { message: 'Qiyana' }
   }
 
   changeText() {
@@ -367,164 +714,195 @@ export default class HelloWorld extends Component {
 
   render() {
     const { message } = this.state
-    console.log('-----render')
+
     return (
       <div>
-        <h4>HelloWorld Component</h4>
-        <p>{message}</p>
-        <button onClick={e => this.changeText()}>按钮</button>
+        <h4>{message}</h4>
+        <button onClick={() => this.changeText()}>修改文本</button>
       </div>
     )
   }
 
-  // 组件更新完成
-  componentDidUpdate(preProps, preState, snapshot) {
-    console.log(preProps, preState, snapshot)
-    console.log('-----componentDidUpdate')
-  }
-
-  // 组件状态更新 render函数是否重新执行
-  shouldComponentUpdate() {
-    // true: 需要重新执行
-    // false: 不需要重新执行
-    return true
-  }
-
-  // 更新之前保存数据, 返回值可以被componentDidUpdate接收
-  getSnapshotBeforeUpdate() {
-    return { name: 'Qiyana' }
+  shouldComponentUpdate(nextProps, nextState) {
+    if (this.state !== nextState || this.props !== nextProps) {
+      return true
+    } else {
+      return false
+    }
   }
 }
 ```
 
-### 三、组件通信
+但是每一个组件我都需要自己来写 SCU 优化, 那我开发效率岂不是慢下来了, 而且也会有很多重复的代码.
 
-- 组件嵌套
-- **组件通信**
-
-- _类型验证_
+不用的, 我们只需要让类组件继承自 `PureComponent`, 函数式组件使用 `memo` 函数包裹就好.
 
 ```jsx
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+import { PureComponent, memo } from 'react'
 
-class MainBanner extends Component {
-  // 默认值: 方式2
-  // static defaultProps = {
-  //   banners: [],
-  //   title: '默认值'
-  // }
+class App extends PureComponent {
+  // ...
+}
+
+const Hello = memo(function () {
+  // ...
+})
+```
+
+PureComponent 和 memo 内部会对两个 state/props 做浅层比较, 如果对象引用不同直接返回 true, 也就是重新渲染.
+
+建议每一个类组件都继承自 PureComponent, 每一个函数式组件都是用 memo 包裹.
+
+#### 数据不可变
+
+当我们要修改 this.state 中的复杂类型数据时, 不能直接对这个对象作修改. 原因在于我们类组件继承自 PureComponent 时, 数据改变调用 setState 时, 通过浅层比较发现前一个 state 和后一个 state 是用一个对象引用时, render 函数将不重新执行.
+
+```jsx
+class App extends PureComponent {
+  constructor() {
+    super()
+    this.state = { students: [{ id: 1, name: 'Qiyana' }] }
+  }
+
+  insertStudent() {
+    const stu = { id: 5, name: 'yaya' }
+    // 不能重新执行render方法
+    // this.state.students.push(stu);
+    // this.setState({students: this.state.students});
+
+    // 需要换一个对象引用
+    const newStudents = [...this.state.students]
+    newStudents.push(stu)
+    this.setState({ students: newStudents })
+  }
 
   render() {
-    const { banners } = this.props
-
+    const { students } = this.state
     return (
       <div>
-        <h4>轮播图</h4>
-        <ul>
-          {banners.map(item => {
-            return <li key={item.acm}>{item.title}</li>
-          })}
-        </ul>
+        {/* ul>li */}
+        <button onClick={() => this.insertStudent()}>添加学生</button>
+      </div>
+    )
+  }
+}
+```
+
+#### ref
+
+React 中不推荐我们直接使用 document 获取 DOM 元素, 某些特殊场景我们需要获取元素, 可以使用`createRef`函数创建一个对象并绑定在那个元素上.
+
+**获取 DOM 元素**
+
+```jsx
+import { PureComponent, createRef } from 'react'
+
+class App extends PureComponent {
+  constructor() {
+    super()
+    this.elRef = createRef()
+  }
+
+  componentDidMount() {
+    console.log(this.elRef.current)
+  }
+
+  render() {
+    return <div ref={this.elRef}>App Component</div>
+  }
+}
+```
+
+**获取类组件实例对象**
+
+```jsx
+import { PureComponent, createRef } from 'react'
+
+class App extends PureComponent {
+  constructor() {
+    super()
+    this.componentRef = createRef()
+  }
+
+  componentDidMount() {
+    this.logMessage()
+  }
+
+  render() {
+    return (
+      <div>
+        <Hello ref={this.componentRef} />
       </div>
     )
   }
 }
 
-// 限定类型
-MainBanner.propTypes = {
-  banners: PropTypes.array.isRequired,
-  title: PropTypes.array
-}
+class Hello extends PureComponent {
+  logMessage() {
+    console.log('Hello Qiyana')
+  }
 
-// 默认值: 方式1
-MainBanner.defaultProps = {
-  banners: [],
-  title: '默认值'
+  render() {
+    return <div>Hello</div>
+  }
 }
-
-export default MainBanner
 ```
 
-- 非父子组件通信
+**获取函数式组件**
 
-  1. 创建上下文 `import React from 'react';const ThemeContext = React.createContext({color: 'blue'});`
-  2. `<ThemeContext.Provider value={{color: 'red', size: '30'}}></...>`
-  3. `HomeInfo.contextType = ThemeContext;`或者`<UserContext.Consumer>{(value) => <h2>用户: {value.nickname}</h2>}</UserContext.Consumer>`
-  4. `const {color} = this.context;`
+普通的函数式组件并不能接收到 ref, 我们只能通过 forwardRef 函数转发 ref 给这个函数式组件上的某一个元素.
 
-- 插槽
+```jsx
+import { PureComponent, createRef, forwardRef } from 'react'
 
-  1. 默认插槽效果
+class App extends PureComponent {
+  constructor() {
+    super()
+    this.componentRef = createRef()
+  }
 
-  ```jsx
-  /* App
-  <NavBar>
-    <button>按钮</button>
-    <h4>我是标题</h4>
-    <i>斜体文字</i>
-  </NavBar> 
-  
-  const { children } = this.props
-  return (
-    <div className="nav-bar">
-      <div className="left">{children[0]}</div>
-      <div className="center">{children[1]}</div>
-      <div className="right">{children[2]}</div>
-    </div>
-  )
-  */
-  ```
+  render() {
+    return (
+      <div>
+        <Hello ref={this.componentRef} />
+      </div>
+    )
+  }
+}
 
-  2. 具名插槽效果
+const Hello = forwardRef(function (props, ref) {
+  return <div ref={ref}>Hello</div>
+})
+```
 
-  ```jsx
-  /* App
-  <NavBar
-    leftSlot={<button>按钮</button>}
-    centerSlot={<h4>我是标题</h4>}
-    rightSlot={<i>斜体文字</i>}
-  /> 
-  
-  const {leftSlot, centerSlot, rightSlot} = this.props;
-  return (
-    <div className="nav-bar">
-      <div className="left">{leftSlot}</div>
-      <div className="center">{centerSlot}</div>
-      <div className="right">{rightSlot}</div>
-    </div>
-  );
-  */
-  ```
+#### 受控组件与非受控组件
 
-  3. 作用域插槽效果
+- 一个表单, 数据是由 React 管理的就是: 受控组件
+- 当表单数据是 DOM 节点管理的, 就是: 非受控组件
 
-  ```jsx
-  /* 
-  <div>
-    <NavBar
-      titles={titles}
-      currentIndex={currentIndex}
-      listClick={index => this.changeIndex(index)}
-      navType={text => <button>{text}</button>}
-    />
-    <p>{titles[currentIndex]}</p>
-  </div> 
-  
-  const { titles, navType } = this.props
-  
-  return (
-    <div>
-      <ul>
-        {titles.map((title, index) => {
-          return (
-            <li key={title} onClick={() => this.listClick(index)}>
-              {navType(title)}
-            </li>
-          )
-        })}
-      </ul>
-    </div>
-  )
-  */
-  ```
+**受控组件**
+
+```jsx
+class App extends PureComponent {
+  constructor() {
+    super()
+    this.state = { inputValue: '' }
+  }
+
+  inputChange(e) {
+    this.setState({ inputValue: e.target.value })
+  }
+
+  render() {
+    const { inputValue } = this.state
+
+    return (
+      <div>
+        <input type="text" value={inputValue} onChange={e => this.inputChange(e)} />
+      </div>
+    )
+  }
+}
+```
+
+**非受控组件**
