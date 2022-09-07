@@ -6,10 +6,8 @@ export class App extends PureComponent {
     this.state = {inputValue: ''};
   }
 
-  inputChange(e) {
-    this.setState({inputValue: e.target.value}, () => {
-      console.log(this.state.inputValue);
-    });
+  changeValue(event) {
+    this.setState({inputValue: event.target.vlaue});
   }
 
   render() {
@@ -17,11 +15,17 @@ export class App extends PureComponent {
 
     return (
       <div>
+        {/* 受控组件 */}
+        <h4>受控组件的值: {inputValue}</h4>
+
         <input
           type="text"
           value={inputValue}
-          onChange={(e) => this.inputChange(e)}
+          onChange={(e) => this.changeValue(e)}
         />
+
+        {/* 非受控组件 */}
+        <input type="text" />
       </div>
     );
   }

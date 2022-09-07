@@ -105,7 +105,7 @@ class App extends React.Component {
   constructor() {
     super()
     this.state = { count: 0 }
-    this.increment1 = this.increment1.bind(this)
+    this.increment = this.increment.bind(this)
   }
 
   increment() {
@@ -116,7 +116,7 @@ class App extends React.Component {
     return (
       <div>
         <h4>当前计数: {this.state.count}</h4>
-        <button onClick={this.increment1}>+1</button>
+        <button onClick={this.increment}>+1</button>
       </div>
     )
   }
@@ -132,7 +132,7 @@ class App extends React.Component {
     this.state = { count: 0 }
   }
 
-  increment() {
+  increment = () => {
     this.setState({ count: this.state.count + 1 })
   }
 
@@ -140,7 +140,7 @@ class App extends React.Component {
     return (
       <div>
         <h4>当前计数: {this.state.count}</h4>
-        <button onClick={this.increment2}>+1</button>
+        <button onClick={this.increment}>+1</button>
       </div>
     )
   }
@@ -164,7 +164,7 @@ class App extends React.Component {
     return (
       <div>
         <h4>当前计数: {this.state.count}</h4>
-        <button onClick={() => this.increment3()}>+1</button>
+        <button onClick={() => this.increment()}>+1</button>
       </div>
     )
   }
@@ -198,7 +198,7 @@ class App extends React.Component {
 ```jsx
 class App extends React.Component {
   btnClick(event, nickname) {
-    console.log(event)
+    console.log(event, nickname)
   }
 
   render() {
@@ -880,8 +880,6 @@ const Hello = forwardRef(function (props, ref) {
 - 一个表单, 数据是由 React 管理的就是: 受控组件
 - 当表单数据是 DOM 节点管理的, 就是: 非受控组件
 
-**受控组件**
-
 ```jsx
 class App extends PureComponent {
   constructor() {
@@ -889,8 +887,8 @@ class App extends PureComponent {
     this.state = { inputValue: '' }
   }
 
-  inputChange(e) {
-    this.setState({ inputValue: e.target.value })
+  changeValue(event) {
+    this.setState({ inputValue: event.target.vlaue })
   }
 
   render() {
@@ -898,11 +896,259 @@ class App extends PureComponent {
 
     return (
       <div>
-        <input type="text" value={inputValue} onChange={e => this.inputChange(e)} />
+        {/* 受控组件 */}
+        <h4>受控组件的值: {inputValue}</h4>
+        <input type="text" value={inputValue} onChange={e => this.changeValue(e)} />
+
+        {/* 非受控组件 */}
+        <input type="text" />
       </div>
     )
   }
 }
 ```
 
-**非受控组件**
+**表单控件**
+
+chenkbox
+
+```jsx
+class App extends PureComponent {
+  constructor() {
+    super()
+    this.state = {
+      isAgree: false,
+      hobbies: [
+        { value: 'sing', text: '唱', isChecked: false },
+        { value: 'dance', text: '跳', isChecked: false },
+        { value: 'rap', text: 'rap', isChecked: false }
+      ]
+    }
+  }
+
+  handleSubmitClick(event) {
+    event.preventDefault()
+  }
+
+  handleAgreeChange(event) {
+    this.setState({ isAgree: event.target.checked })
+  }
+
+  handleHobbiesChange(event, index) {
+    const hobbies = [...this.state.hobbies]
+    hobbies[index].isChecked = event.target.checked
+    this.setState({ hobbies })
+  }
+
+  render() {
+    const { isAgree, hobbies } = this.state
+
+    return (
+      <form onSubmit={e => this.handleSubmitClick(e)}>
+        {/* 单选 */}
+        <label htmlFor="agree">
+          <input
+            id="agree"
+            type="checkbox"
+            checked={isAgree}
+            onChange={e => this.handleAgreeChange(e)}
+          />
+          同意协议
+        </label>
+        {/* 多选 */}
+        {hobbies.map((item, index) => (
+          <label htmlFor={item.value} key={item.value}>
+            <input
+              type="checkbox"
+              id={item.value}
+              checked={item.isChecked}
+              onChange={e => this.handleHobbiesChange(e, index)}
+            />
+            <span>{item.text}</span>
+          </label>
+        ))}
+        <button type="submit">注册</button>
+      </form>
+    )
+  }
+}
+```
+
+select
+
+```jsx
+class App extends PureComponent {
+  constructor() {
+    super()
+    this.state = { fruit: ['orange'] }
+  }
+
+  handleSubmitClick(event) {
+    event.preventDefault()
+  }
+
+  handleFruitChange(event) {
+    const options = Array.from(event.target.selectedOptions)
+    const values = options.map(item => item.value)
+    this.setState({ fruit: values })
+  }
+
+  render() {
+    const { fruit } = this.state
+
+    return (
+      <form onSubmit={e => this.handleSubmitClick(e)}>
+        <select value={fruit} onChange={e => this.handleFruitChange(e)} multiple>
+          <option value="apple">苹果</option>
+          <option value="orange">橘子</option>
+          <option value="banana">香蕉</option>
+        </select>
+
+        <button type="submit">注册</button>
+      </form>
+    )
+  }
+}
+```
+
+**非受控组件应用**
+
+```jsx
+class App extends PureComponent {
+  constructor() {
+    super()
+    this.state = { intro: 'Qiyana' }
+
+    this.inputRef = createRef()
+  }
+
+  handleSubmit(e) {
+    e.preventDefault()
+    console.log(this.inputRef.current.value)
+  }
+
+  render() {
+    const { intro } = this.state
+
+    return (
+      <div>
+        <form onSubmit={e => this.handleSubmit(e)}>
+          <input type="text" ref={this.inputRef} defaultValue={intro} />
+          <button type="submit">提交</button>
+        </form>
+      </div>
+    )
+  }
+}
+```
+
+#### 高阶组件
+
+高阶组件的作用类似中间件, 用于扩展组件以及减少重复的代码
+
+- 高阶组件本身不是一个组件, 而是一个函数
+- 特点:
+  - 接收一个组件作为它的参数
+  - 返回一个新的组件
+
+**props 增强**
+
+```jsx
+function enhancedUserInfo(OriginComponent) {
+  return class extends PureComponent {
+    constructor() {
+      super()
+      this.state = {
+        userInfo: { name: 'Qiyana', level: 99 }
+      }
+    }
+
+    render() {
+      return <OriginComponent {...this.props} {...this.state.userInfo} />
+    }
+  }
+}
+
+const Hello = enhancedUserInfo(function (props) {
+  return <h4>Hello: {props.name}</h4>
+})
+
+class App extends PureComponent {
+  render() {
+    return (
+      <div>
+        <Hello />
+      </div>
+    )
+  }
+}
+```
+
+Context 共享
+
+```jsx
+import React, { PureComponent, createContext } from 'react'
+const ThemeContext = createContext()
+
+function withTheme(OriginComponent) {
+  return function (props) {
+    return (
+      <ThemeContext.Consumer>
+        {value => <OriginComponent {...value} {...props} />}
+      </ThemeContext.Consumer>
+    )
+  }
+}
+
+const Hello = withTheme(function (props) {
+  return <h4 style={{ color: props.color }}>Hello Qiyana</h4>
+})
+
+class App extends PureComponent {
+  render() {
+    return (
+      <div>
+        <ThemeContext.Provider value={{ color: 'red' }}>
+          <Hello />
+        </ThemeContext.Provider>
+      </div>
+    )
+  }
+}
+```
+
+生命周期应用
+
+```jsx
+function logRenderTime(OriginComponent) {
+  return class extends PureComponent {
+    UNSAFE_componentWillMount() {
+      this.beginTime = new Date().getTime()
+    }
+
+    componentDidMount() {
+      this.endTime = new Date().getTime()
+      const interval = this.endTime - this.beginTime
+      console.log(`当前${OriginComponent.name}页面花费了${interval}ms渲染完成!`)
+    }
+
+    render() {
+      return <OriginComponent {...this.props} />
+    }
+  }
+}
+
+const Detail = logRenderTime(function Detail() {
+  return <div>Detail Component</div>
+})
+
+class App extends PureComponent {
+  render() {
+    return (
+      <div>
+        <Detail />
+      </div>
+    )
+  }
+}
+```
