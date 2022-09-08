@@ -1152,3 +1152,221 @@ class App extends PureComponent {
   }
 }
 ```
+
+当然, HOC 也有一些缺点
+
+- 需要在原组件上进行包裹或者嵌套, 如果大量使用 HOC, 将会产生非常多的嵌套, 这让调试变得非常困难
+- HOC 可以劫持 props, 在不遵守约定的情况下也可能造成冲突
+
+#### Portals 的应用
+
+Portals 的作用是将 React 元素挂载到其他的根元素上.
+
+```jsx
+import React, { PureComponent } from 'react'
+import { createPortal } from 'react-dom'
+
+class App extends PureComponent {
+  render() {
+    return (
+      <div>
+        <h2>App Component</h2>
+        <Modal>
+          <h4>我是标题</h4>
+          <p>我是文本!</p>
+        </Modal>
+      </div>
+    )
+  }
+}
+
+class Modal extends PureComponent {
+  render() {
+    return createPortal(this.props.children, document.querySelector('#modal'))
+  }
+}
+```
+
+#### Fragment 的使用
+
+当我们元素多的时候需要给它们包裹一个根元素, 但有时候并不想要多一重包裹, 可以使用 Fragment 标签包裹
+
+```jsx
+import React, { PureComponent, Fragment } from 'react'
+
+class App extends PureComponent {
+  render() {
+    return (
+      // <Fragment>
+      //   <h4>App Component</h4>
+      //   <p>我是组件</p>
+      // </Fragment>
+
+      <>
+        <h4>App Component</h4>
+        <p>我是组件</p>
+      </>
+    )
+  }
+}
+```
+
+#### 严格模式
+
+StrictMode 是一个用来突出显示应用程序中潜在的问题的工具. 仅在开发模式下运行, 它们不会影响生产构建.
+
+```jsx
+import { StrictMode } from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App'
+
+const root = ReactDOM.createRoot(document.getElementById('root'))
+root.render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+)
+```
+
+严格模式, 检测什么?
+
+- 识别不安全的生命周期
+- 使用过时的 refAPI
+- 检查意外的副作用
+
+#### 动画
+
+在开发中, 我们想要给一个组件的显示和隐藏某种过渡动画, 可以很好的增加用户体验
+
+- 安装: `npm install react-transition-group --save`
+
+```css
+/* style.css */
+.qiyana-appear,
+.qiyana-enter {
+  transform: translateX(-150px);
+}
+
+.qiyana-appear-active,
+.qiyana-enter-active {
+  transform: translateX(0);
+  transition: transform 1s ease;
+}
+
+.qiyana-exit {
+  transform: translateX(0);
+}
+
+.qiyana-exit-active {
+  transform: translateX(-150px);
+  transition: transform 1s ease;
+}
+```
+
+**CSSTransition**
+
+```jsx
+import { CSSTransition } from 'react-transition-group'
+import './style.css'
+
+class App extends PureComponent {
+  constructor() {
+    super()
+    this.state = { isShow: true }
+  }
+
+  render() {
+    const { isShow } = this.state
+
+    return (
+      <div>
+        <button onClick={() => this.setState({ isShow: !isShow })}>显示/隐藏</button>
+        <CSSTransition in={isShow} unmountOnExit={true} classNames="qiyana" timeout={1000} appear>
+          <h4>Hello, Mengjiang</h4>
+        </CSSTransition>
+      </div>
+    )
+  }
+}
+```
+
+**SwitchTransition**
+
+```jsx
+import { CSSTransition, SwitchTransition } from 'react-transition-group'
+import './style.css'
+
+class App extends PureComponent {
+  constructor() {
+    super()
+    this.state = { isLogin: true }
+  }
+
+  render() {
+    const { isLogin } = this.state
+    return (
+      <SwitchTransition mode="out-in">
+        <CSSTransition key={isLogin ? 'exit' : 'login'} classNames="login" timeout={500}>
+          <button onClick={() => this.setState({ isLogin: !isLogin })}>
+            {isLogin ? '退出' : '登录'}
+          </button>
+        </CSSTransition>
+      </SwitchTransition>
+    )
+  }
+}
+```
+
+**TransitionGroup**
+
+```jsx
+import { TransitionGroup, CSSTransition } from 'react-transition-group'
+import './style.css'
+
+class App extends PureComponent {
+  constructor() {
+    super()
+    this.state = {
+      books: [
+        {
+          id: 111,
+          name: '你不知道的JavaScript',
+          price: 99
+        }
+        // ...
+      ]
+    }
+  }
+
+  addBook() {
+    const newBooks = [...this.state.books]
+    newBooks.push({ id: new Date().getTime(), name: 'React高级程序设计', price: 99 })
+    this.setState({ books: newBooks })
+  }
+
+  removeBook(index) {
+    const newBooks = [...this.state.books]
+    newBooks.splice(index, 1)
+    this.setState({ books: newBooks })
+  }
+
+  render() {
+    const { books } = this.state
+    return (
+      <div>
+        <button onClick={() => this.addBook()}>添加书籍</button>
+        <TransitionGroup component="ul">
+          {books.map((book, index) => (
+            <CSSTransition key={book.id} classNames="book" timeout={500}>
+              <li>
+                <span>{book.name} -{book.price}</span>
+                <button onClick={() => this.removeBook(index)}>删除书籍</button>
+              </li>
+            </CSSTransition>
+          ))}
+        </TransitionGroup>
+      </div>
+    )
+  }
+}
+```

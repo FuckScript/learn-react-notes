@@ -1,11 +1,11 @@
 import React, { PureComponent } from 'react'
 
-export class App extends PureComponent {
+export class Hello extends PureComponent {
   render() {
     return (
-      <div>App</div>
+      <div>Hello</div>
     )
   }
 }
 
-export default App
+export default Hello

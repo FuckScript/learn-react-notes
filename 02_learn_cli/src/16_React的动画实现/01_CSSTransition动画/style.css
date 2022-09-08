@@ -1,0 +1,17 @@
+.qiyana-appear, .qiyana-enter {
+  transform: translateX(-150px);
+}
+
+.qiyana-appear-active, .qiyana-enter-active {
+  transform: translateX(0);
+  transition: transform 1s ease;
+}
+
+.qiyana-exit {
+  transform: translateX(0);
+}
+
+.qiyana-exit-active {
+  transform: translateX(-150px);
+  transition: transform 1s ease;
+}
