@@ -1359,13 +1359,50 @@ class App extends PureComponent {
           {books.map((book, index) => (
             <CSSTransition key={book.id} classNames="book" timeout={500}>
               <li>
-                <span>{book.name} -{book.price}</span>
+                <span>
+                  {book.name} -{book.price}
+                </span>
                 <button onClick={() => this.removeBook(index)}>删除书籍</button>
               </li>
             </CSSTransition>
           ))}
         </TransitionGroup>
       </div>
+    )
+  }
+}
+```
+
+## CSS
+
+css 一直是 react 中一个不太方便书写的知识点.
+
+#### 内联样式
+
+优点:
+
+- 样式之间不会有冲突
+- 可以动态获取当前 state 中的状态
+
+缺点:
+
+- 写法上都需要使用驼峰标识
+- 某些样式没有提示
+- 大量的样式, 代码混乱
+- 某些样式无法编写(比如伪类/伪元素)
+
+```jsx
+class App extends PureComponent {
+  constructor() {
+    super()
+    this.state = { appStyle: { color: 'red', fontSize: '30px' } }
+  }
+
+  render() {
+    const { appStyle } = this.state
+    return (
+      // <div style={{color: 'red'}}>App</div>
+      <div style={appStyle}>App</div>
     )
   }
 }
