@@ -1407,3 +1407,148 @@ class App extends PureComponent {
   }
 }
 ```
+
+#### 普通 CSS
+
+- 优点: 编写 CSS 方式和以前的一样
+- 缺点: 没有作用域, 不灵活
+
+```css
+/* style.css */
+.app {
+  color: red;
+}
+```
+
+```jsx
+import './style.css'
+class App extends PureComponent {
+  render() {
+    return <div className="app">App</div>
+  }
+}
+```
+
+#### CSS modules
+
+- 优点: 解决了 css 文件作用域的问题
+- 缺点:
+  - 引用的类名不能使用连接符(.qiyana-title)
+  - 所有的 classNama 都必须使用{style.classNama}的行式编写
+  - 不方便动态来修改某些样式, 依然需要使用内联样式的方式
+
+```css
+/* style.module.css */
+.app {
+  color: red;
+}
+```
+
+```jsx
+import appStyle from './style.module.css'
+
+class App extends PureComponent {
+  render() {
+    return <div className={appStyle.app}>App</div>
+  }
+}
+```
+
+#### CSS in JS
+
+CSS 由 JS 生成而不是在外部文件中定义, 它通过 JS 来为 CSS 赋予一些能力, 包括类似于 CSS 预处理器一样的样式嵌套、函数定义、逻辑复用、动态修改状态等等
+
+安装: `npm install styled-components`
+
+**基本使用**
+
+```jsx
+import React, { PureComponent } from 'react'
+import styled from 'styled-components'
+
+const AppWrapper = styled.div`
+  color: red;
+  font-size: 30px;
+  &:hover {
+    background-color: #000;
+  }
+`
+
+class App extends PureComponent {
+  render() {
+    return <AppWrapper>App</AppWrapper>
+  }
+}
+```
+
+**Props 传参**
+
+```jsx
+import React, { PureComponent } from 'react'
+import styled from 'styled-components'
+
+const AppWrapper = styled.div.attrs({ /* props默认值 */ color: 'red' })`
+  font-size: ${props => props.size}px;
+  color: ${props => props.color};
+`
+
+class App extends PureComponent {
+  constructor() {
+    super()
+    this.state = { size: 30, color: 'red' }
+  }
+
+  render() {
+    const { size, color } = this.state
+    return (
+      <AppWrapper size={size} color={color}>
+        <button onClick={() => this.setState({ size: size + 2 })}>字体增大</button>
+        <h4>App Component</h4>
+      </AppWrapper>
+    )
+  }
+}
+```
+
+**全局主题样式**
+
+```js
+// src/assets/css/variable.js
+export const promiseColor = 'red'
+```
+
+```jsx
+import { promiseColor } from '@/assets/css/variable.js'
+const AppWrapper = styled.div.attrs({ /* props默认值 */ color: 'red' })`
+  color: ${promiseColor};
+`
+```
+
+## 第三方库
+
+#### craco
+
+默认使用`create-react-app`创建的 react 项目不能修改 webpack 配置, 除非输入命令`npm run eject`弹出 webpack 所有的配置选项, 但是这样配置的方式并不方便, 而且是不可逆的弹出.
+
+我们可以使用**craco**这个库来修改 webpack 配置
+
+- 安装: `npm install @craco/craco`
+- 修改 package.json
+
+```json
+{
+  "scripts": {
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test"
+  }
+}
+```
+
+- 配置 craco.config.js
+
+```js
+module.exports = {
+  /* webpack config */
+}
+```
