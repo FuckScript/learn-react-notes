@@ -1585,3 +1585,143 @@ class App extends PureComponent {
   }
 }
 ```
+
+## Redux
+
+三大原则: 单一数据源、State 是自读的、
+
+核心理念:
+
+- store
+- action
+- reducer
+
+#### 基本使用
+
+**创建 store**
+
+```js
+// store/index.js
+import { createStore } from 'redux'
+
+// 初始化数据
+const initiaState = { name: 'Qiyana', level: 99 }
+
+// 定义reducer函数: 纯函数
+function reducer() {
+  return initiaState
+}
+
+export default createStore(reducer)
+```
+
+**使用 state 数据**
+
+```js
+import store from './store'
+console.log(store.getState())
+```
+
+#### 修改数据
+
+```js
+import { createStore } from 'redux'
+
+const initalState = {
+  name: 'Qiyana',
+  level: 99
+}
+
+function reducer(state = initalState, action) {
+  switch (action.type) {
+    case 'change_name':
+      return { ...state, name: action.name }
+    // case ...
+    default:
+      return state
+  }
+}
+
+export default createStore(reducer)
+```
+
+**修改 state 数据**
+
+```js
+import store from './store'
+
+const changeNameAction = data => ({ type: 'change_name', data })
+// store.dispatch({type: 'change_name', name: 'Kiana'})
+store.dispatch(action('Kiana'))
+```
+
+#### 订阅数据
+
+当 state 数据发生改变时, 会自定回调 subscribe 中传入的函数, subscribe 有返回值, 是一个函数, 调用这个函数会去掉订阅
+
+```jsx
+const unsubscribe = store.subscribe(() => {
+  console.log(store.getState())
+})
+
+unsubscribe()
+```
+
+#### 完整代码
+
+**store/index.js**
+
+```js
+const reducer = require('./reducer')
+const { createStore } = require('redux')
+module.exports = createStore(reducer)
+```
+
+**reducer.js**
+
+```js
+const { CHANGE_NAME } = require('./constants')
+const initalState = { name: 'Qiyana', level: 99 }
+
+function reducer(state = initalState, action) {
+  switch (action.type) {
+    case CHANGE_NAME:
+      return { ...state, name: action.name }
+    case 'change_level':
+      return { ...state, level: action.level }
+    default:
+      return state
+  }
+}
+
+module.exports = reducer
+```
+
+**store/constants.js**
+
+```js
+const CHANGE_NAME = 'CHANGE_NAME'
+module.exports = { CHANGE_NAME }
+```
+
+**store/actions.js**
+
+```js
+const { CHANGE_NAME } = require('./constants')
+const changeNameAction = name => ({ type: CHANGE_NAME, name })
+module.exports = { changeNameAction }
+```
+
+**index.js**
+
+```js
+const store = require('./store')
+const { changeNameAction } = require('./store/actions')
+
+// 当state中的数据发生改变会自动回调subscribe传入的函数
+store.subscribe(() => {
+  console.log(store.getState())
+})
+
+store.dispatch(changeNameAction('Kiana'))
+```
