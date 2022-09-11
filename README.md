@@ -1487,7 +1487,9 @@ class App extends PureComponent {
 import React, { PureComponent } from 'react'
 import styled from 'styled-components'
 
-const AppWrapper = styled.div.attrs({ /* props默认值 */ color: 'red' })`
+const AppWrapper = styled.div.attrs(props => ({
+  color: props.color // 默认值
+}))`
   font-size: ${props => props.size}px;
   color: ${props => props.color};
 `
@@ -1524,6 +1526,24 @@ const AppWrapper = styled.div.attrs({ /* props默认值 */ color: 'red' })`
 `
 ```
 
+**继承**
+
+```jsx
+const IyunyuButton = styled.button`
+  border: 1px solid red;
+`
+
+const ButtonWrapper = styled(IyunyuButton)`
+  color: red;
+`
+
+class App extends PureComponent {
+  render() {
+    return <ButtonWrapper>Iyunyu</ButtonWrapper>
+  }
+}
+```
+
 ## 第三方库
 
 #### craco
@@ -1550,5 +1570,18 @@ const AppWrapper = styled.div.attrs({ /* props默认值 */ color: 'red' })`
 ```js
 module.exports = {
   /* webpack config */
+}
+```
+
+#### classnames
+
+安装: `npm install classnames`
+
+```jsx
+import classNames from 'classnames'
+class App extends PureComponent {
+  render() {
+    return <div className={classNames('qiyana', { kiana: true })}>App</div>
+  }
 }
 ```

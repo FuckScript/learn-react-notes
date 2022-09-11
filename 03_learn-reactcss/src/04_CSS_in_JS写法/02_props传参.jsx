@@ -1,7 +1,9 @@
 import React, {PureComponent} from 'react';
 import styled from 'styled-components';
 
-const AppWrapper = styled.div.attrs({color: 'blue'})`
+const AppWrapper = styled.div.attrs((props) => ({
+  color: props.color,
+}))`
   font-size: ${(props) => props.size}px;
   color: ${(props) => props.color};
 `;
