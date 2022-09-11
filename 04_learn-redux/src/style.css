@@ -1,0 +1,12 @@
+html, body, #app, .app {
+  width: 100%;
+  height: 100px;
+}
+
+.app {
+  display: flex;
+}
+
+.app > div {
+  flex: 1;
+}

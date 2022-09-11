@@ -1586,6 +1586,15 @@ class App extends PureComponent {
 }
 ```
 
+#### normalize.css
+
+安装: `npm install normalize.css`
+
+```js
+// index
+import 'normalize.css'
+```
+
 ## Redux
 
 三大原则: 单一数据源、State 是自读的、
@@ -1724,4 +1733,42 @@ store.subscribe(() => {
 })
 
 store.dispatch(changeNameAction('Kiana'))
+```
+
+#### react 中使用 redux
+
+在 react 组件中使用 redux
+
+```jsx
+import React, { PureComponent } from 'react'
+import store from '../store'
+import { changeCountAction } from '../store/actions'
+
+class App extends PureComponent {
+  constructor() {
+    super()
+    this.state = { count: store.getState().count }
+  }
+
+  componentDidMount() {
+    this.unsubscribe = store.subscribe(() => {
+      this.setState({ count: store.getState().count })
+    })
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe()
+  }
+
+  render() {
+    const { count } = this.state
+
+    return (
+      <div>
+        <h4>App count: {count}</h4>
+        <button onClick={() => store.dispatch(changeCountAction(1))}>+1</button>
+      </div>
+    )
+  }
+}
 ```
