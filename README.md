@@ -1595,6 +1595,23 @@ class App extends PureComponent {
 import 'normalize.css'
 ```
 
+#### axios
+
+用于网络请求
+
+安装: `npm install axios`
+
+基本使用
+
+```js
+import axios from 'axios'
+axios.get('http://xxx.cn').then(res => {
+  /* ... */
+})
+```
+
+方法: **get**、**post**、...
+
 ## Redux
 
 三大原则: 单一数据源、State 是自读的、
@@ -1772,3 +1789,39 @@ class App extends PureComponent {
   }
 }
 ```
+
+#### react-redux
+
+组件中使用 store 的 state 数据步骤繁琐, 而且每一个组件使用时都需要重复的书写同样逻辑的代码, 我们可以封装一个高阶组件 connect 简化步骤, react-redux 所做的事情便是这样.
+
+使用步骤:
+
+1. 安装`npm install react-redux`
+2. 主入口 index.js 文件中
+
+```js
+// ...
+import { Provider } from 'react-redux'
+import store from './store'
+
+root.render(
+  <Provider store={store}>
+    <App />
+  </Provider>
+)
+```
+
+3. 组件中使用:
+
+```jsx
+import { connect } from 'react-redux'
+
+const mapStateToProps = state => ({ count: state.count })
+const mapDispatchToProps = dispatch => ({
+  changeCount: num => dispatch(changeCountAction(num))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Component)
+```
+
+#### react-saga
