@@ -1816,6 +1816,83 @@ const mapDispatchToProps = dispatch => ({
 export default connect(mapStateToProps, mapDispatchToProps)(Component)
 ```
 
+**connect 函数的实现**
+
+```jsx
+import { PureComponent } from 'react'
+import { StoreContext } from '../component/Provider'
+import store from '../store'
+
+function connect(mapState, mapDispatch) {
+  return function (Component) {
+    class EnhancersComponent extends PureComponent {
+      componentDidMount() {
+        this.unsubscribe = this.context.subscribe(() => {
+          this.setState({ ...mapState(this.context.getState()) })
+        })
+      }
+
+      componentWillUnmount() {
+        this.unsubscribe()
+      }
+
+      render() {
+        return (
+          <Component
+            {...this.props}
+            {...mapState(store.getState())}
+            {...mapDispatch(store.dispatch)}
+          />
+        )
+      }
+    }
+
+    EnhancersComponent.contextType = StoreContext
+    return EnhancersComponent
+  }
+}
+
+export default connect
+```
+
+**Provider 组件的实现**
+
+```jsx
+import { PureComponent } from 'react'
+import { StoreContext } from '../component/Provider'
+
+function connect(mapState, mapDispatch) {
+  return function (Component) {
+    class EnhancersComponent extends PureComponent {
+      componentDidMount() {
+        this.unsubscribe = this.context.subscribe(() => {
+          this.setState({ ...mapState(this.context.getState()) })
+        })
+      }
+
+      componentWillUnmount() {
+        this.unsubscribe()
+      }
+
+      render() {
+        return (
+          <Component
+            {...this.props}
+            {...mapState(this.context.getState())}
+            {...mapDispatch(this.context.dispatch)}
+          />
+        )
+      }
+    }
+
+    EnhancersComponent.contextType = StoreContext
+    return EnhancersComponent
+  }
+}
+
+export default connect
+```
+
 #### redux-thunk
 
 可以让 dispatch 中传入一个函数, 会自动执行此传入的函数, 可以在此函数中执行网络请求的代码.
