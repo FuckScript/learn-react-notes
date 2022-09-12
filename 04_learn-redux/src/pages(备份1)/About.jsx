@@ -1,6 +1,6 @@
 import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
-import {changeCountAction} from '../store/counter';
+import {changeCountAction} from '../store/actions';
 
 export class About extends PureComponent {
   changeCount(num) {
@@ -25,8 +25,8 @@ export class About extends PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  count: state.counter.count,
-  banners: state.home.banners,
+  count: state.count,
+  banners: state.banners,
 });
 const mapDispatchToProps = (dispatch) => ({
   changeCount: (num) => dispatch(changeCountAction(num)),

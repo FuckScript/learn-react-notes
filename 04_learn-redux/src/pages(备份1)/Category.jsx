@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
 // import {changeBannersAction} from '../store/actions';
-import {fetchBannersAction} from '../store/home'
+import {fetchBannersAction} from '../store/actions'
 
 export class Category extends PureComponent {
   componentDidMount() {

@@ -17,9 +17,7 @@
   <div id="root"></div>
 
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-
   <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
   <script type="text/babel">
@@ -219,10 +217,7 @@ React 中的条件渲染并没有相关的指令(如 vue 中的 v-if/v-else), �
 class App extends React.Component {
   constructor() {
     super()
-    this.state = {
-      isReady: false,
-      name: 'Iyunyu'
-    }
+    this.state = { isReady: false, name: 'Iyunyu' }
   }
 
   render() {
@@ -271,6 +266,7 @@ class App extends React.Component {
 
 1. 全局安装脚手架: create-react-app, `npm i create-react-app -g`.
 2. 创建项目: `npx create-react-app project-name`
+3. 创建 TS 项目: `npx create-react-app project-name --template typescript`
 
 ## 组件化
 
@@ -301,6 +297,7 @@ class App extends Component {
   }
 
   render() {
+    console.log('-----render')
     const { message } = this.state
     return <>{message}</>
   }
@@ -312,7 +309,6 @@ componentWillUnmount 方法在组件即将卸载时回调.
 
 ```jsx
 class HelloWorld extends Component {
-  // ...
   componentDidMount() {
     console.log('-----componentDidMount')
   }
@@ -332,10 +328,8 @@ shouldComponentUpdate 用于 SCU 优化(性能优化), 通过返回一个布尔�
 
 ```jsx
 class HelloWorld extends Component {
-  // ...
   shouldComponentUpdate(newProps, nextState) {
-    // true or false
-    return true
+    return true // true or false
   }
 }
 ```
@@ -344,7 +338,6 @@ getSnapshotBeforeUpdate 用于组件渲染前将 props/state 保存起来, 可�
 
 ```jsx
 class HelloWorld extends Component {
-  // ...
   getSnapshotBeforeUpdate() {
     return { nickname: 'Qiyana' }
   }
@@ -390,7 +383,7 @@ class App extends Component {
   }
 
   render() {
-    const nickname = this.state
+    const { nickname } = this.state
     return (
       <div>
         <Hello nickname={nickname} />
@@ -494,7 +487,6 @@ class Home extends Component {
 class HomeInfo extends Component {
   render() {
     const { color } = this.context
-
     return <div style={{ color: color }}>HomeInfo Component</div>
   }
 }
@@ -1792,7 +1784,7 @@ class App extends PureComponent {
 
 #### react-redux
 
-组件中使用 store 的 state 数据步骤繁琐, 而且每一个组件使用时都需要重复的书写同样逻辑的代码, 我们可以封装一个高阶组件 connect 简化步骤, react-redux 所做的事情便是这样.
+组件中使用 store 的 state 数据步骤繁琐, 而且每一个组件使用时都需要重复的书写同样逻辑的代码, 我们可以封装一个高阶函数 connect 简化步骤, react-redux 所做的事情便是这样.
 
 使用步骤:
 
@@ -1824,4 +1816,168 @@ const mapDispatchToProps = dispatch => ({
 export default connect(mapStateToProps, mapDispatchToProps)(Component)
 ```
 
-#### react-saga
+#### redux-thunk
+
+可以让 dispatch 中传入一个函数, 会自动执行此传入的函数, 可以在此函数中执行网络请求的代码.
+
+安装: `npm install redux-thunk`
+
+**store/index.js**
+
+```jsx
+import { createStore, applyMiddleware } from 'redux'
+import thunk from 'redux-thunk'
+import reducer from './reducer'
+
+export default createStore(reducer, applyMiddleware(thunk))
+```
+
+**store/actions.js**
+
+```js
+import axios from 'axios'
+import { CHANGE_BANNERS, CHANGE_COUNT } from './constants'
+
+export const changeCountAction = count => ({ type: CHANGE_COUNT, count })
+export const changeBannersAction = banners => ({
+  type: CHANGE_BANNERS,
+  banners
+})
+
+export const fetchBannersAction = () => {
+  return function (dispatch, getState) {
+    axios.get('http://123.207.32.32:8000/home/multidata').then(res => {
+      const banners = res.data.data.banner.list
+      dispatch(changeBannersAction(banners))
+    })
+  }
+}
+```
+
+**App.js**
+
+```jsx
+import React, { PureComponent } from 'react'
+import { connect } from 'react-redux'
+import { fetchBannersAction } from '../store/actions'
+
+export class Category extends PureComponent {
+  componentDidMount() {
+    this.props.fetchBanners()
+  }
+
+  render() {
+    return (
+      <div>
+        <h4>Category Page</h4>
+      </div>
+    )
+  }
+}
+
+const mapDispatchToProps = dispatch => ({
+  // changeBanners: (banners) => dispatch(changeBannersAction(banners)),
+  fetchBanners: () => dispatch(fetchBannersAction())
+})
+
+export default connect(null, mapDispatchToProps)(Category)
+```
+
+#### redux devtool
+
+浏览器安装插件之后
+
+```js
+import { createStore, applyMiddleware, compose } from 'redux'
+import thunk from 'redux-thunk'
+import reducer from './reducer'
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+
+export default createStore(reducer, composeEnhancers(applyMiddleware(thunk)))
+```
+
+#### 模块化 store
+
+需要使用 redux 中导出的`combineReducers`函数, 对所有的 reducer 合并
+
+```js
+import { createStore, applyMiddleware, combineReducers } from 'redux'
+import thunk from 'redux-thunk'
+import counterReducer from './counter'
+import homeReducer from './home'
+
+const reducer = combineReducers({
+  counter: counterReducer,
+  home: homeReducer
+})
+
+export default createStore(reducer, applyMiddleware(thunk))
+```
+
+#### redux toolkit
+
+核心 API 如下:
+
+- configureStore: 包装 createStore 以提供配置选项和良好的默认值, 它可以组东组合你的 slice reducer, 添加你提供的任何 Redux 中中间件, redux-thunk 默认包含, 并启用 redux devtools extension
+- createSlice: 接收 reducer 函数的对象、切片名称和初始状态值, 并自动生成切边 reducer, 带有相应的 actions
+- createAsyncThunk: 接收一个动作类型字符串和一个返回承诺的函数, 并生成一个 pending/fulfilled/rejected 基于该承诺分派工作类型的 thunk
+
+按装: `npm install @reduxjs/toolkit`
+
+**store/index.js**
+
+```jsx
+import { configureStore } from '@reduxjs/toolkit'
+import counterReducer from './features/counter'
+import bannersReducer from './features/banners'
+
+export default configureStore({
+  reducer: {
+    counter: counterReducer,
+    banners: bannersReducer
+  }
+})
+```
+
+**store/features/banners.js**
+
+```jsx
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import axios from 'axios'
+
+export const fetchBannersAction = createAsyncThunk(
+  'fetch/banners',
+  async (extraArgs, { dispatch, getState }) => {
+    const res = await axios.get('http://123.207.32.32:8000/home/multidata')
+    const banners = res.data.data.banner.list
+    // 异步修改方式1
+    // dispatch(changeBanners(banners));
+    return banners
+  }
+)
+
+const bannersSlice = createSlice({
+  name: 'banners',
+  initialState: {
+    banners: []
+  },
+  // 同步
+  reducers: {
+    changeBanners(state, { payload }) {
+      state.banners = payload
+    }
+  },
+  // 异步
+  extraReducers: {
+    // 异步修改方式2(特别推荐)
+    [fetchBannersAction.pending]() {},
+    [fetchBannersAction.rejected]() {},
+    [fetchBannersAction.fulfilled](state, { payload }) {
+      state.banners = payload
+    }
+  }
+})
+
+export const { changeBanners } = bannersSlice.actions
+export default bannersSlice.reducer
+```
