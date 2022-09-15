@@ -2058,3 +2058,181 @@ const bannersSlice = createSlice({
 export const { changeBanners } = bannersSlice.actions
 export default bannersSlice.reducer
 ```
+
+#### 中间件原理
+
+对原有的函数作拦截, 新增需要的功能, 将新的函数赋值给要拦截的函数, 这种技术叫做: **Monkey Patching**
+
+```js
+import store from './store'
+
+function log(store) {
+  const next = store.dispatch
+  function logDispatch(action) {
+    console.log('当前派发的action: ', action)
+    next(action)
+    console.log('派发之后的值', store.getState())
+  }
+
+  store.dispatch = logDispatch
+}
+
+log(store)
+```
+
+**实现 redux-thunk**
+
+```js
+function thunk(store) {
+  const next = store.dispatch
+
+  function dispatchThunk(action) {
+    if (typeof action === 'function') {
+      action(store.dispatch, store.getState)
+    } else {
+      next(action)
+    }
+  }
+
+  store.dispatch = dispatchThunk
+}
+```
+
+**实现 applyMiddleware**
+
+```js
+function applyMiddleware(store, ...args) {
+  args.forEach(fn => fn(store))
+}
+
+applyMiddleware(store /* ... */)
+```
+
+#### state 如何管理
+
+至此, redux 篇章就告一段落了, 我们学习了三种 state 管理方案:
+
+1. 组件内部管理
+2. context 管理
+3. redux 管理
+
+我们开发中应该怎么样选择?(建议)
+
+- UI 相关的组件内部可以维护的状态, 在组件内部自己来维护
+- 大部分需要共享的状态, 都交给 redux 来管理和维护
+- 从服务器请求的数据(包括请求的才做), 交给 redux 来维护
+
+## react-router
+
+安装: `npm install react-router-dom`
+
+#### 基本使用
+
+**index.js**
+
+```jsx
+import ReactDOM from 'react-dom/client'
+import { BrowserRouter, HashRouter } from 'react-router-dom'
+import App from './App'
+
+const root = ReactDOM.createRoot(document.getElementById('root'))
+root.render(
+  <HashRouter>
+    <App />
+  </HashRouter>
+)
+```
+
+**App.jsx**
+
+```jsx
+import React, { PureComponent } from 'react'
+import { Route, Routes, Link } from 'react-router-dom'
+import Login from './pages/Login'
+import Home from './pages/Home'
+
+class App extends PureComponent {
+  render() {
+    return (
+      <div className="app">
+        <div className="header">
+          <span>Header-----</span>
+          <Link to="/home">首页</Link>
+          <Link to="/login">登录</Link>
+        </div>
+        <div className="content">
+          <Routes>
+            <Route path="/login" element={<Login />}></Route>
+            <Route path="/home" element={<Home />}></Route>
+          </Routes>
+        </div>
+        <div className="footer">Hooter-----</div>
+      </div>
+    )
+  }
+}
+```
+
+#### 路由重定向
+
+当 Navigate 组件一出现就会重定向到 to 中的路径映射的组件
+
+```
+import { Navigate } from 'react-router-dom'
+<Route path="/" element={<Navigate to="/login" />}></Route>
+```
+
+#### Not Found
+
+```
+import NotFound from './pages/NotFound'
+<Route path="*" element={<NotFound to="/login" />}></Route>
+```
+
+#### 路由嵌套
+
+需要在 Route 标签之中嵌套 Route 标签, 占位符需要使用<Outlet/>来指定嵌套的组件放的位置
+
+**App.jsx**
+
+```jsx
+import { Route, Routes, NavLink, Navigate } from 'react-router-dom'
+
+class App extends PureComponent {
+  render() {
+    return (
+      <div className="app">
+        <Routes>
+          <Route path="/" element={<Navigate to="/login" />}></Route>
+          <Route path="/login" element={<Login />}></Route>
+          <Route path="/home" element={<Home />}>
+            <Route path="/home" element={<Navigate to="/home/banner" />}></Route>
+            <Route path="/home/banner" element={<HomeBanner />}></Route>
+            <Route path="/home/produce" element={<HomeProduce />}></Route>
+          </Route>
+          <Route path="*" element={<NotFound />}></Route>
+        </Routes>
+      </div>
+    )
+  }
+}
+```
+
+**Home.jsx**
+
+```jsx
+import { Link, Outlet } from 'react-router-dom'
+
+class Home extends PureComponent {
+  render() {
+    return (
+      <div>
+        <h4>Home Page</h4>
+        <Link to="/home/banner">轮播图</Link>
+        <Link to="/home/produce">商品列表</Link>
+        <Outlet />
+      </div>
+    )
+  }
+}
+```
