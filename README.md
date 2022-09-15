@@ -2236,3 +2236,23 @@ class Home extends PureComponent {
   }
 }
 ```
+
+#### JS 代码跳转路由
+
+```jsx
+import { /* Routes, Route, Link,  */ useNavigate } from 'react-router-dom'
+
+function App() {
+  const navigate = useNavigate()
+
+  const linkToHome = path => {
+    navigate(path)
+  }
+
+  return (
+    <div>
+      <button onClick={() => linkToHome('/home')}>跳转首页</button>
+    </div>
+  )
+}
+```
