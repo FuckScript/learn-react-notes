@@ -2208,7 +2208,6 @@ class App extends PureComponent {
           <Route path="/home" element={<Home />}>
             <Route path="/home" element={<Navigate to="/home/banner" />}></Route>
             <Route path="/home/banner" element={<HomeBanner />}></Route>
-            <Route path="/home/produce" element={<HomeProduce />}></Route>
           </Route>
           <Route path="*" element={<NotFound />}></Route>
         </Routes>
@@ -2239,6 +2238,8 @@ class Home extends PureComponent {
 
 #### JS 代码跳转路由
 
+**函数式组件**
+
 ```jsx
 import { /* Routes, Route, Link,  */ useNavigate } from 'react-router-dom'
 
@@ -2256,3 +2257,124 @@ function App() {
   )
 }
 ```
+
+**类组件**
+
+通过高阶组件的方式对类组件进行增强, 使用 useNavigate.
+
+```jsx
+import { useNavigate } from 'react-router-dom'
+
+export default function withRouter(Component) {
+  return function (props) {
+    const navigate = useNavigate()
+
+    return <Component {...props} router={{ navigate }} />
+  }
+}
+
+// export default withRouter(App)
+```
+
+#### 路由参数传递
+
+**通过 useParams 传递参数**
+
+withRouter.js
+
+```js
+import { useNavigate, useParams, useLocation, useSearchParams } from 'react-router-dom'
+
+export default function withRouter(Component) {
+  return function (props) {
+    const navigate = useNavigate()
+
+    // 1. 动态路由的参数: /detail/:id
+    const params = useParams()
+
+    // 2. 查询字符串的参数: /user?name=Qiyana&age=19
+    const location = useLocation() // log(location)
+    const [searchParams] = useSearchParams() // log(searchParams.get('name'))
+    const query = Object.fromEntries(searchParams)
+
+    return <Component {...props} router={{ navigate, params, location, query }} />
+  }
+}
+```
+
+#### 路由配置文件
+
+**router/index.js**
+
+```js
+export default [
+  {
+    path: '/',
+    element: <Navigate to="/home" />
+  },
+  {
+    path: '/home',
+    element: <Home />,
+    children: [
+      {
+        path: '/home',
+        element: <Navigate to="/home/banner" />
+      },
+      {
+        path: '/home/banner',
+        element: <HomeBanner />
+      }
+      // ...
+    ]
+  },
+  {
+    path: '*',
+    element: <NotFound />
+  }
+]
+```
+
+**App.jsx**
+
+```jsx
+import { useRoutes } from 'react-router-dom'
+import routes from './router'
+
+function App() {
+  return <div>{useRoutes(routes)}</div>
+}
+```
+
+#### 路由懒加载
+
+**router/index.js**
+
+```js
+import React from 'react'
+const NotFound = React.lazy(() => import('../pages/NotFound'))
+
+export default [
+  // ...
+  {
+    path: '*',
+    element: <NotFound />
+  }
+]
+```
+
+**index.js**
+
+```js
+// Suspense
+root.render(
+  <React.Suspense fallback={<h4>Loading...</h4>}>
+    <HashRouter>
+      <App />
+    </HashRouter>
+  </React.Suspense>
+)
+```
+
+## react-hook
+
+

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .content {
+        /* height: 1000px; */
+      }
+
+      .add-message {
+        position: fixed;
+        right: 10px;
+        top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="./lib/react.development.js"></script>
+    <script src="./lib/react-dom.development.js"></script>
+    <script src="./lib/babel.min.js"></script>
+    <script type="text/babel">
+      function App() {
+        const contentRef = React.createRef()
+        const [messages, setMessages] = React.useState([])
+
+        React.useEffect(() => {
+          contentRef.current.scrollIntoView(false)
+        }, [messages])
+
+        const addMessage = () => {
+          const newMessages = [...messages]
+          newMessages.push('hahaha')
+          setMessages(newMessages)
+        }
+
+        return (
+          <div>
+            <div className="content" ref={contentRef}>
+              <ul>
+                {messages.map((item, index) => (
+                  <li style={{height: '200px'}} key={index}>{item}</li>
+                ))}
+              </ul>
+              <button className="add-message" onClick={() => addMessage()}>
+                增加信息
+              </button>
+            </div>
+          </div>
+        )
+      }
+
+      const app = ReactDOM.createRoot(document.getElementById('app'))
+      app.render(<App />)
+    </script>
+  </body>
+</html>
