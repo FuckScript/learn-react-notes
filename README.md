@@ -10,7 +10,7 @@
 - react-dom
 - babel
 
-如果网站使用了 JSX 语法就必须使用 babel 编译, 否则浏览器报语法错误.
+如果网站中使用了 JSX 语法就必须使用 babel 编译, 否则浏览器报错, 语法错误.
 
 ```html
 <body>
@@ -36,7 +36,7 @@
 
 #### 类组件
 
-类组件必须继承自 `React.Component`,否则只是一个类, 而不是一个组件.
+类组件必须继承自 `React.Component or React.PureComponent`,否则只是一个类, 而不是一个组件.
 
 ```jsx
 class App extends React.Component {
@@ -60,7 +60,7 @@ function App() {
 }
 ```
 
-类组件的 render 函数返回值和函数式组件的返回值可以如下:
+类组件的 render 函数或者函数式组件的返回值和函数式组件的返回值可以如下:
 
 - React 元素
 - 数组和 fragments
@@ -191,7 +191,7 @@ class App extends React.Component {
 }
 ```
 
-当然我们也可以不适用 event 参数. 除了 event 参数之外, 当我们还有其他额外的参数, 可以直接传入真正执行的函数`btnClick`
+当然我们也可以不使用 event 参数. 除了 event 参数之外, 当我们还有其他额外的参数, 可以直接传入真正执行的函数`btnClick`
 
 ```jsx
 class App extends React.Component {
@@ -2153,6 +2153,24 @@ export default memo(() => {
 })
 ```
 
+**shallowEqual**
+
+它的作用是, 默认 useSelector 监听的是整个 state, 当其他组件将 state 中的数据修改时, 所有使用了 state 中的数据的组件都会重新渲染, 需要在 useSelector 函数中传入第二个参数(函数), 可以对 state 中的数据做一个浅层比较, 当组件自身使用的数据没有发生改变时, 将不会重新渲染.
+
+```jsx
+import React, { memo } from 'react'
+import { useSelector, useDispatch, shallowEqual } from 'react-redux'
+
+const App = memo(() => {
+  const dispatch = useDispatch()
+  const { count } = useSelector(state => ({ count: state.counter.count }), shallowEqual)
+
+  return <h4>当前计数: {count}</h4>
+})
+
+export default App
+```
+
 ## react-router
 
 安装: `npm install react-router-dom`
@@ -2816,6 +2834,93 @@ export default memo(() => {
       {isShow && <Home />}
       {isShow && <About />}
       <button onClick={changeIsShow}>显示/隐藏</button>
+    </div>
+  )
+})
+```
+
+#### useId
+
+是一个用于生成横跨如服务器和客户端的稳定的唯一 ID 的同时避免 hydration 不匹配的 hook
+
+```jsx
+import React, { useState, useId, memo } from 'react'
+
+export default memo(() => {
+  const [count, setCount] = useState(1207)
+  const id = useId()
+  console.log(id)
+
+  return (
+    <div>
+      <h4>当前计数: {count}</h4>
+      <button onClick={() => setCount(count + 1)}>+1</button>
+    </div>
+  )
+})
+```
+
+#### useTransition
+
+可以将一些耗时的任务降低优先级, 对数据比较多的场景可以使用
+
+```jsx
+import React, { useState, useTransition, memo } from 'react'
+import namesArray from './namesArray'
+
+export default memo(() => {
+  const [showNames, setShowNames] = useState(namesArray)
+  const [pending, setTransition] = useTransition()
+
+  const handleValueChange = event => {
+    setTransition(() => {
+      const keyword = event.target.value
+      const filterShowNames = namesArray.filter(item => item.includes(keyword))
+      setShowNames(filterShowNames)
+    })
+  }
+
+  return (
+    <div>
+      <input type="text" onInput={handleValueChange} />
+      <h2>用户列表: {pending && <span>Loading</span>}</h2>
+      <ul>
+        {showNames.map((item, index) => (
+          <li key={index}>{item}</li>
+        ))}
+      </ul>
+    </div>
+  )
+})
+```
+
+#### useDeferredValue
+
+接收一个值, 并返回该值的新副本, 该副本将推迟到更紧急的更新之后, 和 useTransition 的作用相似
+
+```jsx
+import React, { useState, useDeferredValue, memo } from 'react'
+import namesArray from './namesArray'
+
+export default memo(() => {
+  const [showNames, setShowNames] = useState(namesArray)
+  const deferredNames = useDeferredValue(showNames)
+
+  const handleValueChange = event => {
+    const keyword = event.target.value
+    const filterShowNames = namesArray.filter(item => item.includes(keyword))
+    setShowNames(filterShowNames)
+  }
+
+  return (
+    <div>
+      <input type="text" onInput={handleValueChange} />
+      <h2>用户列表: </h2>
+      <ul>
+        {deferredNames.map((item, index) => (
+          <li key={index}>{item}</li>
+        ))}
+      </ul>
     </div>
   )
 })
