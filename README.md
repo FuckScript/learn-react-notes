@@ -2122,6 +2122,37 @@ applyMiddleware(store /* ... */)
 - 大部分需要共享的状态, 都交给 redux 来管理和维护
 - 从服务器请求的数据(包括请求的才做), 交给 redux 来维护
 
+#### redux-hooks
+
+**useSelector**
+
+```jsx
+import { memo } from 'react'
+import { useSelector } from 'react-redux'
+
+export default memo(() => {
+  const { count } = useSelector(state => ({
+    count: state.counter.count
+  }))
+
+  return <h4>当前计数: {count}</h4>
+})
+```
+
+**useDispatch**
+
+```jsx
+import React, { memo } from 'react'
+import { useDispatch } from 'react-redux'
+import { changeCountAction } from './store/modules/counter'
+
+export default memo(() => {
+  const dispatch = useDispatch()
+
+  return <button onClick={() => dispatch(changeCountAction(1))}>+1</button>
+})
+```
+
 ## react-router
 
 安装: `npm install react-router-dom`
