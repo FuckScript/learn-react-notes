@@ -2377,4 +2377,415 @@ root.render(
 
 ## react-hook
 
+函数式组件存在的最大的缺陷
 
+- 组件不会被重新渲染
+- 如果页面重新渲染, 函数会被重新执行, 第二次重新执行时, 会重新给变量赋值
+- 生命周期的回调函数也没有
+
+hook 只能在函数的最外层使用, 不能在类组件中使用
+
+#### useState
+
+```jsx
+import { useState, memo } from 'react'
+
+export default memo(function () {
+  const [count, setCount] = useState(1207)
+  const [banners, setBanners] = useState([])
+
+  return (
+    <div>
+      <h4>当前计数: {count}</h4>
+      <button onClick={() => setCount(count + 1)}>+</button>
+      <button onClick={() => setCount(count - 1)}>-</button>
+    </div>
+  )
+})
+```
+
+#### useEffect
+
+当组件渲染完成之后会自动执行 useEffect 之中传入的函数, 第二个参数是一个数组, 数组之中的值可以是:
+
+1. 单个值: [值 1], 当这个值发生改变时, useEffect 传入的函数会再次执行
+2. 多个值: [值 1, 值 2, ...], 当其中的一个值发生改变时, 这个函数会再次执行
+3. 空值: [], 只会在函数渲染值执行一次
+4. 不传: 只要是重新渲染都会执行传入的回调函数
+
+**基本使用**
+
+```jsx
+import React, { useState, useEffect, memo } from 'react'
+
+function App() {
+  const [count, setCount] = useState(1)
+
+  // useEffect(() => {}, /* [], [值], [值1, 值2, ...] */)
+  useEffect(() => {
+    document.title = `count: ${count}`
+  }, [count])
+
+  return (
+    <div>
+      <h4>当前计数: {count}</h4>
+      <button onClick={() => setCount(count + 1)}>+1</button>
+    </div>
+  )
+}
+
+export default memo(App)
+```
+
+**清除机制**
+
+useEffect 传入的回调函数返回的回调函数会在组件重新渲染或者组件卸载之前执行
+
+```jsx
+import React, { useState, useEffect, memo } from 'react'
+import store from './store'
+
+export default memo(function () {
+  useEffect(() => {
+    const unsubscribe = store.subscribe(() => {...})
+    return () => unsubscribe()
+  }, [])
+
+  return <div>App</div>
+})
+```
+
+**逻辑分离**
+
+这些 useEffect 传入的函数会按照编写顺序/执行条件依次执行
+
+```jsx
+import { useState, useEffect, memo } from 'react'
+
+export default memo(function () {
+  const [count, setCount] = useState(1207)
+
+  useEffect(() => {
+    document.title = `count: ${count}`
+  }, [count])
+
+  useEffect(() => {
+    const unsubscribe = store.subscribe(() => {})
+    return () => unsubscribe()
+  }, [])
+
+  // Other useEffect
+
+  return (
+    <div>
+      <h4>当前计数: {count}</h4>
+      <button onClick={() => setCount(count + 1)}>+</button>
+      <button onClick={() => setCount(count - 1)}>-</button>
+    </div>
+  )
+})
+```
+
+#### useContext
+
+结合 createContext 一起使用, 多次 context 嵌套的时候使用更方便.
+
+```jsx
+import React, { useContext, memo, createContext } from 'react'
+import { UserContext, ThemeContext } from './context'
+
+const UserContext = createContext()
+const ThemeContext = createContext()
+
+const Hello = memo(() => {
+  const user = useContext(UserContext)
+  const theme = useContext(ThemeContext)
+
+  return (
+    <div>
+      <p style={{ color: theme.color, fontSize: theme.fontSize }}>
+        昵称: {user.nickname}, 等级: {user.level}
+      </p>
+    </div>
+  )
+})
+
+export default memo(function App() {
+  return (
+    <div>
+      <UserContext.Provider value={{ nickname: 'Qiyana', level: 1207 }}>
+        <ThemeContext.Provider value={{ color: 'red', fontSize: '20px' }}>
+          <Hello />
+        </ThemeContext.Provider>
+      </UserContext.Provider>
+    </div>
+  )
+})
+```
+
+#### useReducer
+
+useReducer 与 redux 无关, 是用来替代 useState 的 hook, 但是使用不多. 仅仅是用来处理一些特别特别复杂的数据, 但是如果使用 redux 便不需要使用 useReducer 了
+
+```jsx
+import React, { useReducer, memo } from 'react'
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'increment':
+      return { ...state, count: state.count + 1 }
+    case 'decrement':
+      return { ...state, count: state.count - 1 }
+    default:
+      return state
+  }
+}
+
+const App = memo(() => {
+  const [state, dispatch] = useReducer(reducer, { count: 1207 })
+
+  return (
+    <div>
+      <h4>当前计数: {state.count}</h4>
+      <button onClick={() => dispatch({ type: 'increment' })}>+1</button>
+      <button onClick={() => dispatch({ type: 'decrement' })}>-1</button>
+    </div>
+  )
+})
+
+export default App
+```
+
+#### useCallback
+
+会返回一个函数的 memoized(记忆的)值, 在依赖不变的情况下, 多次定义的时候, 返回的值时相同的,这个 hook 函数性能优化的点在于: 当需要将一个函数传递给子组件时, 最好使用 useCallback 进行优化, 将优化之后的函数转递给子组件
+
+通常使用 useCallback 的目的时不希望子组件进行多次渲染, 并不是为了函数进行缓存
+
+```jsx
+import React, { memo, useState, useCallback, useRef } from 'react'
+
+const Hello = memo(props => {
+  console.log('Hello Component rerender')
+  return <button onClick={() => props.increment()}>Hello Component + 1</button>
+})
+
+export default memo(() => {
+  const [count, setCount] = useState(1207)
+  const [message, setMessage] = useState('Hello Qiyana')
+
+  // const increment = () => setCount(count + 1) // 当message发生改变时, Hello组件会重新渲染
+  // 但是当count的值发生改变时子组件还是会重新渲染
+  // const increment = useCallback(() => {
+  //   setCount(count + 1)
+  // }, [count])
+
+  // 进一步优化
+  const countRef = useRef()
+  countRef.current = count
+  const increment = useCallback(() => {
+    setCount(countRef.current + 1)
+  }, [])
+
+  return (
+    <div>
+      <h2>{message}</h2>
+      <button onClick={() => setMessage(Math.random())}>修改文本</button>
+
+      <h4>当前计数: {count}</h4>
+      <button onClick={increment}>+1</button>
+      <Hello increment={increment} />
+    </div>
+  )
+})
+```
+
+#### useMemo
+
+useMemo 实际的目的也是为了进行性能的优化, 返回的是一个有记忆的值, 在依赖不变的情况下, 多次定义的时候, 返回的值时相同的
+
+- 进行大量的计算操作, 是否有必须要每次渲染时都重新计算, 如果没有, 可以使用 useMemo
+- 对子组件传递相同内容的对象时, 使用 useMemo 进行性能的优化
+
+```jsx
+import React, { memo, useState, useMemo } from 'react'
+
+function calcNumTotal(num) {
+  console.log('开始计算50之内的数字和')
+  let total = 0
+  for (let i = 1; i <= num; i++) {
+    total += i
+  }
+  return total
+}
+
+const Hello = memo(() => {
+  console.log('Hello Component rerender')
+  return <div>Hello Component</div>
+})
+
+export default memo(() => {
+  const [count, setCount] = useState(1207)
+  // const result = calcNumTotal(50) // 每次count发生改变时, calcNumTotal函数都会重新执行一次
+  // const info = { nickname: 'Qiyana', level: 1207 } // 每次count发生改变时, 子组件都会重新渲染
+  const result = useMemo(() => calcNumTotal(50), [])
+  const info = useMemo(() => ({ nickname: 'Qiyana', level: 1207 }), [])
+
+  return (
+    <div>
+      <h2>计算50之内的数字和: {result}</h2>
+
+      <h4>当前计数: {count}</h4>
+      <button onClick={() => setCount(count + 1)}>+1</button>
+      <Hello info={info} />
+    </div>
+  )
+})
+```
+
+**useCallback(fn, deps) 相当于 useMemo(() => fn, deps)**
+
+#### useRef
+
+useRef 返回一个 ref 对象, 返回的 ref 对象在组件的整个生命周期保持不变
+最常用的 ref 是两种用法
+
+- 引入 DOM(或者组件, 但是需要是 class 组件)元素
+- 保存一个数据, 这个对象在整个生命周期冲可以保持不变
+
+```jsx
+import React, { memo, useRef, useState } from 'react'
+let obj = null
+
+export default memo(() => {
+  const [count, setCount] = useState(1207)
+
+  // 1. 绑定DOM
+  const inputRef = useRef()
+  const btnRef = useRef()
+  const inputFocus = () => {
+    console.log(btnRef.current)
+    inputRef.current.focus()
+  }
+
+  // 2. 验证inputRef永远是同一个值
+  console.log(obj === inputRef)
+  obj = inputRef
+
+  return (
+    <div>
+      <input ref={inputRef} type="text" />
+      <button ref={btnRef} onClick={inputFocus}>
+        获取焦点
+      </button>
+
+      <h4>当前计数: {count}</h4>
+      <button onClick={() => setCount(count + 1)}>+1</button>
+    </div>
+  )
+})
+```
+
+#### useImperativeHandle
+
+对父组件传过来的 ref 作一层拦截, 可以选择性的暴露 API.
+
+```jsx
+import React, { memo, useRef, forwardRef, useImperativeHandle } from 'react'
+
+const Hello = memo(
+  forwardRef((props, ref) => {
+    const inputRef = useRef()
+
+    useImperativeHandle(ref, () => ({
+      focus: () => {
+        inputRef.current.focus()
+      }
+    }))
+
+    return <input type="text" ref={inputRef} />
+  })
+)
+
+export default memo(() => {
+  const inputRef = useRef()
+  const setInputRef = () => {
+    inputRef.current.focus()
+    // inputRef.current.value = '' 无效
+  }
+
+  return (
+    <div>
+      <Hello ref={inputRef} />
+      <button onClick={setInputRef}>获取焦点</button>
+    </div>
+  )
+})
+```
+
+#### useLayoutEffect
+
+它和 useEffect 非常的相似, 如果我们希望在某些操作发生之后再更新 DOM, 那么应该将这个操作放到 useLayoutEffect 中. 它会在渲染之前先执行 useEffect 中的函数, 执行完了这个函数再执行渲染操作.
+
+**建议先使用 useEffect 实现功能, 如果不合适, 再使用 useLayoutEffect**
+
+```jsx
+import React, { memo, useState, useLayoutEffect } from 'react'
+
+export default memo(() => {
+  const [count, setCount] = useState(1207)
+
+  useLayoutEffect(() => {
+    if (count === 0) setCount(Math.random() + 1)
+  })
+
+  return (
+    <div>
+      <h4>当前计数: {count}</h4>
+      <button onClick={() => setCount(0)}>设置Count</button>
+    </div>
+  )
+})
+```
+
+#### 自定义 hook
+
+本质上只是一种函数代码逻辑的抽取, 严格意义上来说, 它本身并不算 React 的特性
+
+```jsx
+import React, { memo, useState, useEffect } from 'react'
+
+function useLogCourse(componentName) {
+  useEffect(() => {
+    console.log(`${componentName}组件创建`)
+    return () => {
+      console.log(`${componentName}组件销毁`)
+    }
+  })
+}
+
+const Home = memo(() => {
+  useLogCourse('Home')
+  return <div>Home Component</div>
+})
+
+const About = memo(() => {
+  useLogCourse('About')
+  return <div>About Component</div>
+})
+
+export default memo(() => {
+  const [isShow, setIsShow] = useState(true)
+  const changeIsShow = () => {
+    setIsShow(!isShow)
+  }
+
+  return (
+    <div>
+      {isShow && <Home />}
+      {isShow && <About />}
+      <button onClick={changeIsShow}>显示/隐藏</button>
+    </div>
+  )
+})
+```
