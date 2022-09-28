@@ -24,41 +24,43 @@
     <script type="text/babel">
       class App extends React.Component {
         constructor() {
-          super()
+          super();
           this.state = {
             names: ['Zhoucan', 'Iyunyu', 'Qiyana'],
             currentIndex: 0
-          }
+          };
         }
 
         listClick(index) {
           this.setState({
             currentIndex: index
-          })
+          });
         }
 
         render() {
-          const { names, currentIndex } = this.state
+          const {names, currentIndex} = this.state;
           return (
             <div>
               <ul>
-                {names.map((name, index) => (
-                  <li
-                    key={name}
-                    className={`list ${index === currentIndex ? 'active' : ''}`}
-                    onClick={() => this.listClick(index)}
-                  >
-                    {name}
-                  </li>
-                ))}
+                {names.map((name, index) => {
+                  return (
+                    <li
+                      key={name}
+                      className={`list ${index === currentIndex ? 'active' : ''}`}
+                      onClick={() => this.listClick(index)}
+                    >
+                      {name}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
-          )
+          );
         }
       }
 
-      const root = ReactDOM.createRoot(document.getElementById('root'))
-      root.render(<App />)
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
     </script>
   </body>
 </html>

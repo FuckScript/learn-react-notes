@@ -65,18 +65,18 @@
 
       // 3. React Hook
       function App() {
-        const [message, setMessage] = React.useState('Hello World!')
+        const [message, setMessage] = React.useState('Hello World!');
         return (
           <div>
             <h1>{message}</h1>
             <button onClick={() => setMessage('Hello React!')}>修改文本</button>
           </div>
-        )
+        );
       }
 
       // 2 and 3
-      const root = ReactDOM.createRoot(document.querySelector('#root'))
-      root.render(<App />)
+      const root = ReactDOM.createRoot(document.querySelector('#root'));
+      root.render(<App />);
     </script>
   </body>
 </html>

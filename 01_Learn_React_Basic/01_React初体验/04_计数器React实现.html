@@ -15,14 +15,14 @@
 
     <script type="text/babel">
       function App() {
-        const [count, setCount] = React.useState(100)
+        const [count, setCount] = React.useState(1207);
         return (
           <React.Fragment>
             <h1>当前计数: {count}</h1>
             <button onClick={() => setCount(count - 1)}>-1</button>
             <button onClick={() => setCount(count + 1)}>+1</button>
           </React.Fragment>
-        )
+        );
       }
 
       /* 
@@ -48,8 +48,8 @@
       } 
       */
 
-      const root = ReactDOM.createRoot(document.querySelector('#root'))
-      root.render(<App />)
+      const root = ReactDOM.createRoot(document.querySelector('#root'));
+      root.render(<App />);
     </script>
   </body>
 </html>

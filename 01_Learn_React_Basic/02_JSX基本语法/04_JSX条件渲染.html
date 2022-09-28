@@ -16,25 +16,22 @@
     <script type="text/babel">
       class App extends React.Component {
         constructor() {
-          super()
-          this.state = {
-            isReady: false,
-            name: 'Iyunyu'
-          }
+          super();
+          this.state = {isReady: false, name: 'Iyunyu'};
         }
 
         render() {
-          const { isReady, name } = this.state
+          const {isReady, name} = this.state;
           // if (isReady) return <div>准备开始比赛</div>
           // return <div>开始比赛</div>
 
           // return <div>{isReady ? <div>准备开始比赛</div> : <div>开始比赛</div>}</div>
-          return <div>{name && 'Qiyana'}</div>
+          return <div>{name && 'Qiyana'}</div>;
         }
       }
 
-      const root = ReactDOM.createRoot(document.getElementById('root'))
-      root.render(<App />)
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
     </script>
   </body>
 </html>

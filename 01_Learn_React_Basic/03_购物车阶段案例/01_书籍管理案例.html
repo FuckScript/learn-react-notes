@@ -43,37 +43,35 @@
     <script type="text/babel">
       class App extends React.Component {
         constructor() {
-          super()
-          this.state = {
-            books
-          }
+          super();
+          this.state = {books};
         }
 
         changeBookCount(index, count = 1) {
-          const newBooks = [...this.state.books]
-          newBooks[index].count += count
-          this.setState({ books: newBooks })
+          const newBooks = [...this.state.books];
+          newBooks[index].count += count;
+          this.setState({books: newBooks});
         }
 
         removeBook(index) {
-          const newBooks = [...this.state.books]
-          newBooks.splice(index, 1)
-          this.setState({ books: newBooks })
+          const newBooks = [...this.state.books];
+          newBooks.splice(index, 1);
+          this.setState({books: newBooks});
         }
 
         renderBookEmpty() {
-          return <h2 className="h2-el">购物车为空</h2>
+          return <h2 className="h2-el">购物车为空</h2>;
         }
 
         renderBooksList() {
-          const { books } = this.state
+          const {books} = this.state;
           const totalPrices = books.reduce((prePrice, book) => {
-            return prePrice + book.price * book.count
-          }, 0)
+            return prePrice + book.price * book.count;
+          }, 0);
 
           return (
             <div>
-              <table style={{ display: books.length > 0 ? 'block' : 'none' }}>
+              <table style={{display: books.length > 0 ? 'block' : 'none'}}>
                 <thead>
                   <tr>
                     <th>序号</th>
@@ -92,10 +90,7 @@
                       <td>{book.date}</td>
                       <td>{formatPrice(book.price)}</td>
                       <td>
-                        <button
-                          disabled={book.count <= 1}
-                          onClick={() => this.changeBookCount(index, -1)}
-                        >
+                        <button disabled={book.count <= 1} onClick={() => this.changeBookCount(index, -1)}>
                           -1
                         </button>
                         <span className="book-count">{book.count}</span>
@@ -108,21 +103,19 @@
                   ))}
                 </tbody>
               </table>
-              <h2 className="h2-el">
-                书籍价格累加: {totalPrices > 0 ? formatPrice(totalPrices) : '您未添加任何书籍'}
-              </h2>
+              <h2 className="h2-el">书籍价格累加: {totalPrices > 0 ? formatPrice(totalPrices) : '您未添加任何书籍'}</h2>
             </div>
-          )
+          );
         }
 
         render() {
-          const { books } = this.state
-          return books.length >= 1 ? this.renderBooksList() : this.renderBookEmpty()
+          const {books} = this.state;
+          return books.length >= 1 ? this.renderBooksList() : this.renderBookEmpty();
         }
       }
 
-      const root = ReactDOM.createRoot(document.getElementById('root'))
-      root.render(<App />)
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
     </script>
   </body>
 </html>

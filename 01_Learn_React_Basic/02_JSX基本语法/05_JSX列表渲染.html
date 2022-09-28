@@ -16,51 +16,53 @@
     <script type="text/babel">
       class App extends React.Component {
         constructor() {
-          super()
+          super();
           this.state = {
             students: [
-              { id: 1, name: 'Zhoucan', score: 199 },
-              { id: 2, name: 'Kiana', score: 98 },
-              { id: 3, name: 'Qiyana', score: 199 }
+              {id: 1, name: 'Zhoucan', score: 199},
+              {id: 2, name: 'Kiana', score: 98},
+              {id: 3, name: 'Qiyana', score: 199}
             ]
-          }
+          };
         }
 
         render() {
-          const { students } = this.state
+          const {students} = this.state;
 
           return (
             <div>
               <ul>
-                {students.map(student => (
-                  <li key={student.id}>
-                    <h4>学号: {student.id}</h4>
-                    <p>
-                      姓名: {student.name}, 考试分数: {student.score}
-                    </p>
-                  </li>
-                ))}
+                {students.map((student) => {
+                  return (
+                    <li key={student.id}>
+                      <h4>学号: {student.id}</h4>
+                      <p>
+                        姓名: {student.name}, 考试分数: {student.score}
+                      </p>
+                    </li>
+                  );
+                })}
               </ul>
               <hr />
               <h2>分数大于一百</h2>
               <ul>
                 {students
-                  .filter(student => student.score >= 100)
-                  .map(student => {
+                  .filter((student) => student.score >= 100)
+                  .map((student) => {
                     return (
                       <li key={student.id}>
                         姓名: {student.name}, 考试分数: {student.score}
                       </li>
-                    )
+                    );
                   })}
               </ul>
             </div>
-          )
+          );
         }
       }
 
-      const root = ReactDOM.createRoot(document.getElementById('root'))
-      root.render(<App />)
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
     </script>
   </body>
 </html>

@@ -16,14 +16,12 @@
     <script type="text/babel">
       class App extends React.Component {
         constructor() {
-          super()
-          this.state = {
-            message: 'Hello Kiana'
-          }
+          super();
+          this.state = {message: 'Hello Kiana'};
         }
 
         btnClick(e, name, age) {
-          console.log(`event: ${e}, this: ${this}, name: ${name}, age: ${age}`)
+          console.log(`event: ${e}, this: ${this}, name: ${name}, age: ${age}`);
         }
 
         render() {
@@ -32,18 +30,18 @@
               <div>{this.state.message}</div>
               {/* 1.event参数的传递 */}
               <button onClick={this.btnClick.bind(this)}>点击</button>
-              <button onClick={e => this.btnClick(e)}>点击</button>
+              <button onClick={(e) => this.btnClick(e)}>点击</button>
 
               {/* 额外的参数传递 */}
               <button onClick={this.btnClick.bind(this, 'Iyunyu', 19)}>点击</button>
-              <button onClick={e => this.btnClick(e, 'Iyunyu', 19)}>点击</button>
+              <button onClick={(e) => this.btnClick(e, 'Iyunyu', 19)}>点击</button>
             </div>
-          )
+          );
         }
       }
 
-      const root = ReactDOM.createRoot(document.getElementById('root'))
-      root.render(<App />)
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
     </script>
   </body>
 </html>

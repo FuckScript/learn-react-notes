@@ -15,22 +15,22 @@
 
     <script type="text/babel">
       function App() {
-        const [names, setNames] = React.useState(['Zhoucan', 'Qiyana', 'Kiana'])
+        const [names, setNames] = React.useState(['Zhoucan', 'Qiyana', 'Kiana']);
 
         return (
           <div>
             <h1>班级名单</h1>
             <ul>
-              {names.map(name => (
-                <li key={name}>{name}</li>
-              ))}
+              {names.map((name) => {
+                return <li key={name}>{name}</li>;
+              })}
             </ul>
           </div>
-        )
+        );
       }
 
-      const root = ReactDOM.createRoot(document.querySelector('#root'))
-      root.render(<App />)
+      const root = ReactDOM.createRoot(document.querySelector('#root'));
+      root.render(<App />);
     </script>
   </body>
 </html>
